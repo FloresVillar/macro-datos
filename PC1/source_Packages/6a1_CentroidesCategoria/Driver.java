@@ -1,0 +1,30 @@
+package CentroidesCategoria;
+
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapred.*;
+
+public class Driver {
+	public static void main(String[] args) {
+		JobClient cliente_job = new JobClient();
+		JobConf configuracion_job = new JobConf(Driver.class);
+		configuracion_job.setJobName("CentroidesCategoria");
+		configuracion_job.setOutputKeyClass(Text.class);
+		configuracion_job.setOutputValueClass(Text.class);
+		configuracion_job.setMapperClass(CentroidesCategoria.Mapper.class);
+		configuracion_job.setReducerClass(CentroidesCategoria.Reducer.class);
+		// Un solo Reducer para que el resultado quede en un único part-file
+		// (lo va a leer el segundo job de la cadena vía DistributedCache).
+		configuracion_job.setNumReduceTasks(1);
+		configuracion_job.setInputFormat(TextInputFormat.class);
+		configuracion_job.setOutputFormat(TextOutputFormat.class);
+		FileInputFormat.setInputPaths(configuracion_job, new Path(args[0]));
+		FileOutputFormat.setOutputPath(configuracion_job, new Path(args[1]));
+		cliente_job.setConf(configuracion_job);
+		try {
+			JobClient.runJob(configuracion_job);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}

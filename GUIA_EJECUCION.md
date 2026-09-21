@@ -601,3 +601,802 @@ RESULTADO (verificado con `grep -c "United Kingdom"` sobre el CSV, da 100 línea
 1/1/09 16:00,Product1,1200,Visa,Toni,Bolton,England,United Kingdom,10/7/08 15:19,2/3/09 16:45,53.5833333,-2.4333333	1
 ...(98 líneas más)
 ```
+## PC1
+1. En netbeans crear el proyecto `PC1`
+2. Project Properties → Libraries → Compile → Add JAR/Folder, agregar solo estos 4: `C:\Hadoop3\`
+  - `share\hadoop\common\hadoop-common-3.3.0.jar`
+  - `share\hadoop\mapreduce\hadoop-mapreduce-client-core-3.3.0.jar`
+  - `share\hadoop\mapreduce\hadoop-mapreduce-client-common-3.3.0.jar`
+  - `share\hadoop\mapreduce\hadoop-mapreduce-client-jobclient-3.3.0.jar`
+
+3. Para cada ejercicio 
+  - Clic derecho sobre "Source Packages" (dentro del proyecto) → New → Java Package (NOMBRE_DEL_PACKAGE ) 
+  - Ahora clic derecho sobre el paquete nuevo NOMBRE_DEL_PACKAGE que apareció en el árbol → New → Java Class.(CREAR las Clases Driver,Mapper,Reduce)
+
+### 1a Recursos Por Region Categoria
+
+**Objetivo y enfoque:** queremos saber cuántos recursos turísticos hay registrados
+por cada combinación de región y categoría (ej. cuántos "Sitios Naturales" tiene
+Cusco, cuántas "Manifestaciones Culturales" tiene Lima, etc.) — es la misma idea
+que "transacciones por país" de SalesJam, pero agrupando por 2 columnas juntas en
+vez de 1. El Mapper separa la línea por `;` (este CSV usa punto y coma, no coma
+como el de SalesJam), toma REGIÓN [0] y CATEGORÍA [5], las combina en una sola key
+compuesta ("Region|Categoria") y emite 1. El Reducer agrupa por esa combinación y
+suma los 1's, dando el conteo de cada una.
+
+> Nota: para saltar la fila de cabecera se usa `key.get() == 0` (la posición en
+> bytes de la primera línea siempre es 0) en vez de comparar el texto de la
+> cabecera — más seguro, porque el CSV tiene columnas con tildes (ej. "REGIÓN")
+> que podrían tener problemas de codificación al compararlas como texto exacto.
+
+- Build del proyecto → genera dist\PC1.jar.
+- crear la carpeta para los datos
+```powershell
+hadoop fs -mkdir -p /pc1_input  
+```
+-  Subir el CSV (UTF-8) a HDFS
+```powershell
+hadoop fs -put "C:\Users\esauf\Desktop\uni\macro-datos\PC1\Inventario_recursos_turisticos.csv" /pc1_input
+```
+- Ejecutar:
+```powershell
+$cp = (hadoop classpath)
+hadoop fs -rm -r /pc1_output/RecursosPorRegionCategoria
+java -cp "C:\Users\esauf\Documents\NetBeansProjects\PC1\dist\PC1.jar;$cp" RecursosPorRegionCategoria.Driver /pc1_input /pc1_output/RecursosPorRegionCategoria
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+hadoop fs -cat /pc1_output/RecursosPorRegionCategoria/*
+```
+
+**Que se hizo ?**
+
+- Mapper: por cada línea (salvo la cabecera), separa por `;`, toma REGIÓN [0] y CATEGORÍA [5], las une en una key compuesta y emite ("Region|Categoria", 1).
+```cmd
+("Cusco|1. SITIOS NATURALES", 1)
+("Cusco|2. MANIFESTACIONES CULTURALES", 1)
+("Amazonas|1. SITIOS NATURALES", 1)
+```
+- Reducer: Hadoop agrupa por cada combinación región+categoría y suma los 1's, dando el conteo de recursos de ese grupo.
+
+RESULTADO (125 filas = 25 regiones x 5 categorías; extracto de las primeras)
+```powershell
+Amazonas|1. SITIOS NATURALES	26
+Amazonas|2. MANIFESTACIONES CULTURALES	47
+Amazonas|5. ACONTECIMIENTOS PROGRAMADOS	4
+Apurímac|1. SITIOS NATURALES	73
+Apurímac|2. MANIFESTACIONES CULTURALES	88
+Apurímac|3. FOLCLORE	3
+Apurímac|4. REALIZACIONES TÉCNICAS, CIENTÍFICAS Y ARTÍSTICAS CONTEMPORÁNEAS	2
+Apurímac|5. ACONTECIMIENTOS PROGRAMADOS	28
+Cusco|1. SITIOS NATURALES	255
+Cusco|2. MANIFESTACIONES CULTURALES	214
+Cusco|3. FOLCLORE	81
+Cusco|4. REALIZACIONES TÉCNICAS, CIENTÍFICAS Y ARTÍSTICAS CONTEMPORÁNEAS	24
+Cusco|5. ACONTECIMIENTOS PROGRAMADOS	116
+Lima|1. SITIOS NATURALES	218
+Lima|2. MANIFESTACIONES CULTURALES	331
+Lima|3. FOLCLORE	171
+Lima|4. REALIZACIONES TÉCNICAS, CIENTÍFICAS Y ARTÍSTICAS CONTEMPORÁNEAS	50
+Lima|5. ACONTECIMIENTOS PROGRAMADOS	138
+...(107 filas más, una por cada región+categoría restante)
+```
+> Nota: la consola mostró los acentos rotos (`Apur├¡mac`) hasta agregar
+> `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8` — verificado con los
+> bytes crudos que el dato en HDFS ya estaba bien codificado en UTF-8 desde el
+> principio, era solo un problema de cómo lo mostraba la consola de PowerShell.
+
+### 1b Recursos Por Provincia Tipo
+
+**Objetivo y enfoque:** el dataset de turismo tiene 3 niveles de clasificación de
+un recurso: una Categoría general (5 valores, ej. "1. SITIOS NATURALES"), un Tipo
+de Categoría intermedio (35 valores, ej. "Arquitectura y Espacios Urbanos",
+"g. Cuerpo de Agua") y un Sub Tipo específico (188 valores). Acá queremos contar
+cuántos recursos turísticos hay en cada Provincia, separados por ese Tipo de
+Categoría intermedio — por ejemplo, cuántos recursos de "Arquitectura y Espacios
+Urbanos" tiene la provincia de Lima, cuántos de "Cuerpo de Agua" tiene Huarochirí, etc.
+
+Cada línea del CSV es un recurso turístico individual (una fila = un recurso, no
+una transacción). El Mapper separa la línea por `;` (el CSV de turismo usa punto
+y coma como separador de columnas, no coma), toma el texto de la columna
+Provincia [posición 1] y el texto de la columna Tipo de Categoría [posición 6], y
+los junta en una sola cadena de texto con un separador propio ("Provincia|Tipo")
+para usarla como key. Emite esa key junto con el valor 1. Como en Hadoop el
+Reducer solo recibe agrupados los pares que compartan exactamente la misma key,
+todos los recursos de, por ejemplo, "Lima|Arquitectura y Espacios Urbanos" le
+llegan juntos al Reducer, que simplemente suma esos 1's y devuelve el total —
+así se obtiene el conteo de recursos para cada combinación específica de
+provincia y tipo de categoría.
+
+Pasos: crear el paquete `RecursosPorProvinciaTipo` en NetBeans (Mapper/Reducer/Driver
+desde `PC1/source_Packages/1b_RecursosPorProvinciaTipo/`), Build, y ejecutar:
+```powershell
+.\hadoop.ps1 pc1 RecursosPorProvinciaTipo
+```
+
+RESULTADO (verificado también con `awk` sobre el CSV; extracto top 10 por conteo, dataset completo tiene 1 fila por cada combinación existente)
+```powershell
+Lima|Arquitectura y Espacios Urbanos	93
+La Convencion|j. Caídas de agua	52
+Arequipa|Arquitectura y Espacios Urbanos	37
+Huamanga|Arquitectura y Espacios Urbanos	34
+Huarochiri|g. Cuerpo de Agua	33
+Lima|Museos y otros	31
+Cusco|Arquitectura y Espacios Urbanos	29
+Mariscal Nieto|Arquitectura y Espacios Urbanos	27
+Pasco|Arquitectura y Espacios Urbanos	26
+Huancayo|Arquitectura y Espacios Urbanos	25
+...(resto de combinaciones provincia+tipo existentes)
+```
+
+### 1c Recursos Por Distrito Subtipo
+
+**Objetivo y enfoque:** cada recurso turístico del dataset está clasificado en un
+Distrito (la subdivisión geográfica más pequeña que trae el CSV, hay 1005
+distritos distintos) y en un Sub Tipo de Categoría (la clasificación temática más
+específica, hay 188 subtipos distintos — por ejemplo "Lagunas", "Playas",
+"Cataratas", "Platos Típicos"). Queremos contar cuántos recursos hay en cada
+distrito, separados por ese subtipo — ej. cuántas "Lagunas" tiene el distrito de
+Ocongate, cuántas "Playas" tiene Huarmey.
+
+El Mapper toma cada línea del CSV (una línea = un recurso turístico) y la separa
+por `;`. Extrae el texto de la columna Distrito [posición 2] y el texto de la
+columna Sub Tipo de Categoría [posición 7], y forma con ellos una key compuesta de
+texto (ej. "OCONGATE|Lagunas"), emitiendo esa key junto al valor 1. Hadoop se
+encarga de agrupar automáticamente todos los pares que tengan exactamente la
+misma key antes de pasárselos al Reducer — así, todos los recursos de
+"OCONGATE|Lagunas" llegan juntos, y el Reducer solo tiene que sumar esos 1's para
+obtener el conteo total de esa combinación puntual de distrito y subtipo.
+
+Pasos: crear el paquete `RecursosPorDistritoSubtipo` (código en
+`PC1/source_Packages/1c_RecursosPorDistritoSubtipo/`), Build, ejecutar:
+```powershell
+.\hadoop.ps1 pc1 RecursosPorDistritoSubtipo
+```
+
+RESULTADO (verificado también con `awk`; extracto top 10 por conteo, dataset completo tiene 1 fila por cada combinación existente)
+```powershell
+OCONGATE|Lagunas	18
+HUARMEY|Playas	14
+EL CARMEN DE LA FRONTERA|Lagunas	14
+PICHARI|Cataratas	13
+PACHANGARA|Fiestas religiosas-patronales	13
+MIRAFLORES|Parques	13
+PACHANGARA|Platos Típicos	12
+PACHANGARA|Otros	12
+IQUITOS|Platos Típicos	11
+SAN ANTONIO|Bodegas de pisco, vinos y/u otros licores	10
+...(resto de combinaciones distrito+subtipo existentes)
+```
+
+### 1d Manifestaciones Culturales Por Region
+
+**Objetivo y enfoque:** el dataset clasifica cada recurso turístico en una de 5
+categorías generales (Sitios Naturales, Manifestaciones Culturales, Folclore,
+Realizaciones Técnicas/Científicas/Artísticas, Acontecimientos Programados).
+Queremos aislar solo los recursos de la categoría "Manifestaciones Culturales" y
+contar cuántos hay en cada región — a diferencia de las consultas anteriores, acá
+no agrupamos todas las líneas, sino que primero **descartamos** las que no
+correspondan a esa categoría específica.
+
+El Mapper separa cada línea por `;` y lee el texto de la columna Categoría
+[posición 5]. Compara ese texto contra el literal exacto "2. MANIFESTACIONES
+CULTURALES" (así aparece escrito en el CSV, con el número y el punto incluidos);
+si no coincide, la línea se descarta por completo y no se emite nada para ella.
+Si sí coincide, toma el texto de la columna Región [posición 0] como key y emite
+el valor 1. El Reducer recibe, agrupados por región, solo los 1's de las líneas
+que pasaron el filtro, y los suma — dando así el conteo de recursos culturales
+de cada región, sin contaminarse con las demás categorías.
+
+Pasos: crear el paquete `ManifestacionesCulturalesPorRegion` (código en
+`PC1/source_Packages/1d_ManifestacionesCulturalesPorRegion/`), Build, ejecutar:
+```powershell
+.\hadoop.ps1 pc1 ManifestacionesCulturalesPorRegion
+```
+
+RESULTADO (verificado también con `awk`, coincide exacto con la porción "2. MANIFESTACIONES CULTURALES" ya vista en 1a)
+```powershell
+Amazonas	47
+Áncash	77
+Apurímac	88
+Arequipa	139
+Ayacucho	121
+Cajamarca	77
+Callao	15
+Cusco	214
+Huancavelica	32
+Huánuco	73
+Ica	49
+Junín	159
+La Libertad	76
+Lambayeque	75
+Lima	331
+Loreto	67
+Madre De Dios	8
+Moquegua	58
+Pasco	91
+Piura	77
+Puno	170
+San Martín	23
+Tacna	32
+Tumbes	13
+Ucayali	22
+```
+
+### 1e Ranking Region Categoria
+
+**Objetivo y enfoque:** queremos encontrar las 5 combinaciones de región+categoría
+con más recursos turísticos registrados (ej. saber que "Lima con Manifestaciones
+Culturales" es la combinación más numerosa del país). Esto es distinto a contar
+por grupo (como en 1a): acá hace falta **comparar los conteos entre todos los
+grupos** para saber cuáles son los 5 más grandes, y esa comparación no se puede
+hacer dentro de un solo grupo aislado.
+
+La limitación de Hadoop es que un Reducer solo ve, de una vez, los valores que
+comparten exactamente la misma key — nunca puede comparar contra los valores de
+otra key distinta. Por eso, si cada combinación región+categoría fuera su propia
+key (como en 1a), cada Reducer vería solo un grupo y no podría saber si el suyo
+es de los 5 más grandes o no. La solución: el Mapper separa cada línea por `;`,
+toma Región [posición 0] y Categoría [posición 5], las junta en un texto
+("Región|Categoría"), pero en vez de usar eso como key, lo manda como *value*, y
+usa una key fija idéntica para todas las líneas ("ALL"). Como todas las líneas
+comparten esa misma key, **todas** terminan en el mismo y único Reducer.
+
+Dentro de ese Reducer (que recibe los ~6204 pares región|categoría de golpe), se
+recorre la lista y se cuenta cuántas veces se repite cada combinación distinta,
+guardando esos conteos en un `HashMap<String,Integer>` (una tabla en memoria que
+asocia cada combinación de texto con su número de apariciones). Una vez contado
+todo, se pasan esas entradas a una lista y se ordenan de mayor a menor número de
+apariciones, y se devuelven solo las primeras 5 de esa lista ordenada, numeradas
+como "1.", "2." ... "5.". El Driver además fija `setNumReduceTasks(1)`
+explícitamente, para dejar constancia de que el diseño depende de que corra un
+único Reducer (aunque, al ser una sola key, Hadoop ya lo haría así de todas formas).
+
+Pasos: crear el paquete `RankingRegionCategoria` (código en
+`PC1/source_Packages/1e_RankingRegionCategoria/`), Build, ejecutar:
+```powershell
+.\hadoop.ps1 pc1 RankingRegionCategoria
+```
+
+RESULTADO (real, corrido y confirmado por el usuario)
+```powershell
+1. Lima|2. MANIFESTACIONES CULTURALES	331
+2. Cusco|1. SITIOS NATURALES	255
+3. Lima|1. SITIOS NATURALES	218
+4. Cusco|2. MANIFESTACIONES CULTURALES	214
+5. Áncash|1. SITIOS NATURALES	207
+```
+> Coincide con los datos ya vistos en 1a (Lima|Manifestaciones=331, Cusco|Sitios
+> Naturales=255, etc.) — confirma que el ranking está tomando los conteos correctos.
+
+### 2 Estadisticas Latitud
+
+**Objetivo y enfoque:** el CSV trae, para cada recurso turístico, sus coordenadas
+geográficas en dos columnas: LATITUD [posición 9] y LONGITUD [posición 10] (ambas
+en grados decimales). Alrededor de 1257 de las 6204 filas (20%) no tienen estas
+coordenadas registradas — vienen vacías. Queremos calcular, sobre todas las filas
+que sí tienen coordenada, la media (promedio) y la desviación estándar de la
+Latitud — es decir, un solo par de números que resuma qué tan dispersos
+geográficamente (de norte a sur) están los recursos turísticos del Perú en su
+conjunto.
+
+El Mapper separa cada línea por `;`, lee el texto de la columna Latitud
+[posición 9] y lo recorta de espacios en blanco. Si ese texto queda vacío, la
+línea se descarta (no tiene coordenada). Si no está vacío, intenta convertirlo a
+número decimal (`Double.parseDouble`); si esa conversión falla (dato corrupto),
+también se descarta, dentro de un `try/catch`. Si el valor es válido, se emite
+bajo una key fija ("Latitudes") junto con el número — la key fija fuerza que
+absolutamente todos los valores lleguen al mismo Reducer, porque hace falta
+tenerlos todos juntos para calcular un promedio y una desviación que abarque a
+todos, no solo a un subgrupo.
+
+El Reducer recibe esa lista completa de latitudes válidas y, en una sola pasada
+(sin necesitar guardarlas todas en una lista), va acumulando 3 valores: cuántas
+son (`cantidad`), la suma de todas (`suma`), y la suma de cada una elevada al
+cuadrado (`sumaCuadrados`). Con esos 3 números alcanza para calcular la media
+(`suma / cantidad`) y la desviación estándar con la fórmula estadística
+`raíz cuadrada( (sumaCuadrados / cantidad) - media² )`, sin tener que recorrer
+la lista una segunda vez ni guardarla completa en memoria.
+
+Pasos: crear el paquete `EstadisticasLatitud` (código en
+`PC1/source_Packages/2_EstadisticasLatitud/`), Build, ejecutar:
+```powershell
+.\hadoop.ps1 pc1 EstadisticasLatitud
+```
+
+RESULTADO (verificado también con `awk`, coincide exacto)
+```powershell
+Latitudes	media=-75.12124782573784 desviacion_estandar=3.020210... n=4947
+```
+> De las 6204 filas totales, 4947 tenían Latitud válida (las ~1257 restantes
+> venían vacías o con datos corruptos y se descartaron, como se explicó arriba).
+
+### 3 Busqueda Por Palabra Clave
+
+**Objetivo y enfoque:** queremos poder buscar un texto cualquiera (una palabra
+clave) dentro de varios campos de texto del dataset a la vez — Región, Provincia,
+Distrito, Nombre del Recurso, Categoría, Tipo de Categoría y Sub Tipo de
+Categoría — y que el resultado sea el registro completo de cada recurso que
+tenga esa palabra en alguno de esos campos. A diferencia de las consultas
+anteriores, esto no agrupa ni cuenta nada: es un filtro de texto tipo `grep`,
+pero corrido como un job de Hadoop.
+
+Para que la palabra a buscar no quede fija en el código (y se pueda cambiar sin
+recompilar), el Driver lee un tercer argumento de línea de comandos opcional
+(`args[2]`): si se pasa, esa es la palabra clave; si no se pasa, usa "Laguna"
+como valor por defecto. Ese valor se guarda dentro del objeto `JobConf` con
+`configuracion_job.set("palabraClave", palabraClave)`. Cuando Hadoop reparte el
+trabajo entre los Mappers, cada uno ejecuta primero un método especial llamado
+`configure(JobConf job)` —se llama una sola vez, antes de que arranque a
+procesar líneas— donde se lee ese mismo valor de vuelta con `job.get("palabraClave",
+"Laguna")` y se guarda en una variable de la clase, para poder usarla después en
+cada llamada a `map()`.
+
+En cada `map()`, la línea se separa por `;`, se toman los textos de las columnas
+Región [0], Provincia [1], Distrito [2], Nombre del Recurso [4], Categoría [5],
+Tipo de Categoría [6] y Sub Tipo de Categoría [7], se concatenan todos en un solo
+texto y se pasan a minúsculas. Si ese texto combinado contiene la palabra clave
+(también pasada a minúsculas, para que la búsqueda no distinga mayúsculas de
+minúsculas), se emite la línea completa original como key. El Reducer no hace
+ningún cálculo real — solo sirve para completar el patrón Mapper/Reducer que
+exige la API de Hadoop, y deja pasar el resultado tal cual.
+
+Pasos: crear el paquete `BusquedaPorPalabraClave` (código en
+`PC1/source_Packages/3_BusquedaPorPalabraClave/`), Build, ejecutar (con la
+palabra clave "Cusco" como tercer argumento):
+```powershell
+.\hadoop.ps1 pc1 BusquedaPorPalabraClave Cusco
+```
+
+RESULTADO (extracto — se verificó independiente con `awk` que ~690 de las 6204
+filas contienen "cusco" en alguno de los 7 campos de texto revisados; los
+ejemplos de abajo son reales, tomados de la corrida del usuario)
+```powershell
+Cusco;Urubamba;URUBAMBA;3688;Templo De San Pedro Apóstol De Urubamba.;2. MANIFESTACIONES CULTURALES;Arquitectura y Espacios Urbanos;Iglesias;https://...;-72.1160821;-13.3055229;20260919	1
+Cusco;Urubamba;URUBAMBA;3690;Villa De Urubamba ;2. MANIFESTACIONES CULTURALES;Pueblos;Tradicionales;https://...;-72.11600299999998;-13.305923;20260919	1
+Cusco;Urubamba;YUCAY;1779;Zona Arqueológica Yucay;2. MANIFESTACIONES CULTURALES;Sitios Arqueológicos;Zonas arqueológicas;https://...;-72.0850484305;-13.31253125887;20260919	1
+Cusco;Urubamba;YUCAY;6370;Fiesta De San Isidro;5. ACONTECIMIENTOS PROGRAMADOS;Fiestas;Fiestas religiosas-patronales;https://...;-72.0861;-13.3196;20260919	1
+...(el resto de filas donde "Cusco" aparece en algún campo de texto)
+```
+
+### 4 Extremos Geograficos Por Region
+
+**Objetivo y enfoque:** por cada región del país, queremos identificar el
+recurso turístico ubicado más al norte y el ubicado más al sur — es decir, el
+máximo y el mínimo de la columna Latitud [9], agrupados por Región [0], pero
+mostrando además el nombre del recurso correspondiente a cada extremo (no solo
+el número de latitud). A diferencia de sumar o contar, encontrar un máximo y un
+mínimo obliga al Reducer a comparar cada valor nuevo contra el mejor que ya
+había visto hasta ese momento dentro de su mismo grupo.
+
+El Mapper separa la línea por `;`, y si la columna Latitud [9] viene vacía la
+descarta (mismo problema del 20% de filas sin coordenadas ya visto en la
+categoría 2). Si tiene valor, arma como key la Región [0], y como value un texto
+compuesto "latitud|nombreDelRecurso" (uniendo la Latitud [9] y el Nombre del
+Recurso [4] con un separador propio) — necesita mandar los dos datos juntos,
+porque el Reducer va a necesitar el nombre para poder decir CUÁL recurso es el
+extremo, no solo cuál es el valor numérico.
+
+El Reducer, para cada región, recorre todos esos pares "latitud|nombre" que le
+llegaron agrupados, separa cada uno por el `|` para recuperar el número y el
+nombre por separado, y mantiene 2 variables que se van actualizando a medida que
+avanza: la latitud más alta vista hasta el momento (arrancando desde
+`Double.NEGATIVE_INFINITY`, un valor que cualquier número real va a superar en la
+primera comparación) junto con su nombre, y la latitud más baja (arrancando
+desde `Double.POSITIVE_INFINITY`) junto con el suyo. Al terminar de recorrer
+todos los pares de la región, esas dos variables contienen el extremo norte y
+el extremo sur, y se devuelven juntos en un solo texto de salida.
+
+Pasos: crear el paquete `ExtremosGeograficosPorRegion` (código en
+`PC1/source_Packages/4_ExtremosGeograficosPorRegion/`), Build, ejecutar:
+```powershell
+.\hadoop.ps1 pc1 ExtremosGeograficosPorRegion
+```
+
+RESULTADO (verificado también con `awk` para la región Cusco, coincide exacto)
+```powershell
+Cusco	Norte=Mirador Natural De Embarcadero Puerto Ene  (-73.9958)  Sur=Nevado Quillca (-71.009115)
+```
+> Nota sobre la codificación de las columnas: LATITUD [9] va de -81 a -68 y
+> LONGITUD [10] va de -18 a -0.6 — valores típicos de longitud oeste y latitud
+> sur de Perú respectivamente, pero **invertidos** respecto a lo que dicen sus
+> propios nombres de columna en la cabecera del CSV original. Parece un error
+> del dataset fuente (MINCETUR), no algo introducido por nuestro código — se usó
+> la columna [9] tal cual la llama la cabecera ("LATITUD"), sin corregirla,
+> ya que no es tarea nuestra alterar los datos originales.
+
+## Categoría 5: consultas encadenadas (2 MapReduce cada una)
+
+**Estado: ejecutado y verificado.** Las 4 corridas (5a1, 5a2, 5b1, 5b2)
+terminaron con "Job ... completed successfully" y los resultados tienen sentido
+geográfico (se revisan más abajo, en cada sub-sección).
+
+**Objetivo y enfoque general:** el enunciado exige 2 consultas que encadenen al
+menos 2 jobs de MapReduce cada una. La idea elegida: comparar cada recurso
+turístico contra el **promedio de SU PROPIA región**, para saber si está "más al
+norte/sur" (o "más al este/oeste") que el promedio regional. Esto necesita
+forzosamente 2 pasadas separadas, porque el promedio de una región no se puede
+conocer hasta haber visto TODOS los recursos de esa región — y para comparar un
+recurso individual contra ese promedio, hace falta que el promedio ya esté
+calculado de antemano. No se puede hacer en un solo Mapper/Reducer.
+
+**Mecanismo de encadenado usado (DistributedCache):** el primer job calcula el
+promedio de la región y lo deja escrito como un archivo chico en HDFS (una fila
+por región, ~25 filas). El Driver del segundo job usa
+`DistributedCache.addCacheFile(new URI("/pc1_output/<JobUno>/part-00000"), configuracion_job)`
+para decirle a Hadoop "copiá este archivo chico a cada máquina que vaya a correr
+un Mapper". Cada Mapper del segundo job, en su método `configure()` (que corre
+una sola vez, antes de procesar cualquier línea), lee ese archivo ya copiado
+localmente y lo carga en un `HashMap<String,Double>` en memoria — así, al
+procesar cada recurso individual, puede consultar al instante el promedio de su
+región sin tener que volver a calcularlo.
+
+### 5a1 Promedio Latitud Por Region (job 1 de la cadena a)
+
+Calcula el promedio de la columna Latitud [9] agrupado por Región [0] — mismo
+patrón Mapper/Reducer que categorías anteriores (emitir región+valor, sumar y
+dividir por cantidad en el Reducer), con un solo Reducer (`setNumReduceTasks(1)`)
+para que el resultado quede en un único archivo, necesario para el paso siguiente.
+
+```powershell
+.\hadoop.ps1 pc1 PromedioLatitudPorRegion
+```
+
+**Que se hizo?** El job corrió bien ("Job ... completed successfully") y
+produjo 25 filas, una por región, cada una con el promedio de Latitud [9] de
+todos sus recursos.
+
+RESULTADO (extracto — últimas filas visibles de la corrida real, el resto de
+las 25 regiones también se calculó pero se cortó en la consola)
+```powershell
+Junín	-75.28549318274075
+La Libertad	-78.73156423594106
+Lambayeque	-79.7929173491869
+Lima	-76.70621953721943
+Loreto	-73.56948806312205
+Madre De Dios	-69.81553553987237
+Moquegua	-70.95218651611212
+Pasco	-75.7875449643834
+Piura	-80.30952993162616
+Puno	-69.8251357579454
+San Martín	-76.84181952783477
+Tacna	-70.3348343400723
+Tumbes	-80.56112173984202
+Ucayali	-74.45727524214202
+Áncash	-77.58917372611148
+```
+
+### 5a2 Clasificar Norte Sur Region (job 2 de la cadena a)
+
+Lee el archivo de promedios que dejó 5a1 (vía DistributedCache) y, por cada
+recurso individual, compara su Latitud [9] contra el promedio de su propia
+región: si es mayor, se clasifica como "Norte del promedio"; si es menor,
+"Sur del promedio". Emite (región+clasificación, 1) y el Reducer suma cuántos
+recursos cayeron en cada combinación.
+
+```powershell
+.\hadoop.ps1 pc1 ClasificarNorteSurRegion
+```
+> Requiere haber corrido 5a1 primero (el Driver de este job apunta a la ruta fija
+> `/pc1_output/PromedioLatitudPorRegion/part-00000`).
+
+**Que se hizo?** Corrió bien, leyendo el promedio por región calculado en 5a1
+y clasificando cada recurso individual contra el promedio de su propia región.
+
+RESULTADO (completo)
+```powershell
+Lima|Norte del promedio	298
+Lima|Sur del promedio	330
+Loreto|Norte del promedio	97
+Loreto|Sur del promedio	39
+Madre De Dios|Norte del promedio	46
+Madre De Dios|Sur del promedio	23
+Moquegua|Norte del promedio	89
+Moquegua|Sur del promedio	58
+Pasco|Norte del promedio	98
+Pasco|Sur del promedio	88
+Piura|Norte del promedio	119
+Piura|Sur del promedio	111
+Puno|Norte del promedio	154
+Puno|Sur del promedio	160
+Tacna|Norte del promedio	39
+Tacna|Sur del promedio	32
+Tumbes|Norte del promedio	29
+Tumbes|Sur del promedio	27
+Ucayali|Norte del promedio	18
+Ucayali|Sur del promedio	55
+```
+> (más las filas del resto de regiones no mostradas en este extracto de consola)
+
+### 5b1 Promedio Longitud Por Region (job 1 de la cadena b)
+
+Idéntico a 5a1 pero con la columna Longitud [10] en vez de Latitud [9].
+
+```powershell
+.\hadoop.ps1 pc1 PromedioLongitudPorRegion
+```
+
+**Que se hizo?** Mismo job que 5a1 pero con la columna Longitud [10]; corrió
+bien y dio 25 promedios regionales.
+
+RESULTADO (extracto — últimas filas visibles de la corrida real)
+```powershell
+Puno	-15.346570458143123
+San Martín	-6.519708832043513
+Tacna	-17.60353501123209
+Tumbes	-3.7436317286120584
+Ucayali	-9.013219821980321
+Áncash	-9.345583562226063
+```
+
+### 5b2 Clasificar Este Oeste Region (job 2 de la cadena b)
+
+Idéntico a 5a2 pero clasifica cada recurso como "Este del promedio" u "Oeste
+del promedio" según su Longitud [10] comparada con el promedio de su región
+(leído del resultado de 5b1).
+
+```powershell
+.\hadoop.ps1 pc1 ClasificarEsteOesteRegion
+```
+> Requiere haber corrido 5b1 primero (apunta a `/pc1_output/PromedioLongitudPorRegion/part-00000`).
+
+**Que se hizo?** Corrió bien, clasificando cada recurso contra el promedio de
+Longitud de su propia región.
+
+RESULTADO (completo)
+```powershell
+Lima|Este del promedio	237
+Lima|Oeste del promedio	391
+Loreto|Este del promedio	95
+Loreto|Oeste del promedio	41
+Madre De Dios|Este del promedio	22
+Madre De Dios|Oeste del promedio	47
+Moquegua|Este del promedio	64
+Moquegua|Oeste del promedio	83
+Pasco|Este del promedio	76
+Pasco|Oeste del promedio	110
+Piura|Este del promedio	88
+Piura|Oeste del promedio	142
+Puno|Este del promedio	130
+Puno|Oeste del promedio	184
+Tacna|Este del promedio	39
+Tacna|Oeste del promedio	32
+Tumbes|Este del promedio	33
+Tumbes|Oeste del promedio	23
+Ucayali|Este del promedio	52
+Ucayali|Oeste del promedio	21
+```
+> (más las filas del resto de regiones no mostradas en este extracto de consola)
+
+## Categoría 6: clasificación (2 consultas)
+
+**Estado: ejecutado y verificado.** Las 4 corridas (6a1, 6a2, 6b1, 6b2)
+terminaron bien, y el 6a1 se verificó además de forma independiente con `awk`
+sobre el CSV crudo (coincide exacto).
+
+**Objetivo y enfoque general:** el dataset no tiene una columna numérica ideal
+para un modelo de clasificación tradicional (no hay más variables continuas que
+Latitud y Longitud). Se investigó y eligió el algoritmo de **"centroide más
+cercano" (Nearest Centroid Classifier)**: un modelo de clasificación real,
+simple de implementar de forma distribuida, que funciona así — durante el
+"entrenamiento" (job 1), se calcula el centro geográfico promedio (centroide)
+de cada clase; durante la "predicción" (job 2), a cada punto se le asigna la
+clase cuyo centroide esté geográficamente más cerca (por distancia euclidiana
+entre coordenadas). Se mide la **exactitud (accuracy)** comparando la clase
+predicha contra la clase real que ya trae el CSV: accuracy = correctos / (correctos + incorrectos).
+
+Se armaron 2 consultas con la misma técnica pero prediciendo etiquetas
+distintas, para poder comparar qué tan bien funciona el modelo según qué se
+quiera predecir:
+
+### 6a1 Centroides Categoria (job 1 — "entrenamiento")
+
+Calcula el centroide (promedio de Latitud [9] y Longitud [10]) de cada una de
+las 5 Categorías [5] generales del dataset.
+```powershell
+.\hadoop.ps1 pc1 CentroidesCategoria
+```
+
+**Que se hizo?** Corrió bien y dio 5 centroides (uno por categoría),
+verificados de forma independiente con `awk` sobre el CSV crudo — coinciden
+exactos (mismos valores hasta el 4to decimal).
+
+RESULTADO (completo, 5 filas — una por categoría)
+```powershell
+1. SITIOS NATURALES	-75.1253,-11.1432
+2. MANIFESTACIONES CULTURALES	-74.9507,-11.5919
+3. FOLCLORE	-76.5263,-9.1836
+4. REALIZACIONES TÉCNICAS, CIENTÍFICAS Y ARTÍSTICAS CONTEMPORÁNEAS	-74.9449,-11.5125
+5. ACONTECIMIENTOS PROGRAMADOS	-76.2143,-10.0156
+```
+
+### 6a2 Clasificar Por Centroide Categoria (job 2 — "predicción" + accuracy)
+
+Para cada recurso, calcula la distancia a los 5 centroides de 6a1 y predice la
+categoría del centroide más cercano; compara contra la Categoría [5] real y
+cuenta aciertos/errores.
+```powershell
+.\hadoop.ps1 pc1 ClasificarPorCentroideCategoria
+```
+> Requiere haber corrido 6a1 primero.
+
+**Que se hizo?** Corrió bien. Se confirmó la predicción hecha antes de
+ejecutar: la exactitud salió **baja**, porque las categorías turísticas
+(Sitios Naturales, Manifestaciones Culturales, etc.) no se agrupan
+geográficamente — están repartidas por todo el país.
+
+RESULTADO (completo)
+```powershell
+correcto	1378
+incorrecto	3569
+```
+**Accuracy = 1378 / (1378 + 3569) = 1378 / 4947 ≈ 27.85%**
+
+### 6b1 Centroides Region (job 1 — "entrenamiento", 25 clases)
+
+Igual que 6a1 pero calculando el centroide de cada una de las 25 Regiones [0]
+en vez de las 5 categorías.
+```powershell
+.\hadoop.ps1 pc1 CentroidesRegion
+```
+
+**Que se hizo?** Corrió bien, dando 25 centroides (uno por región).
+
+RESULTADO (extracto — últimas filas visibles de la corrida real)
+```powershell
+Madre De Dios	-69.81553553987237,-12.35428942713688
+Moquegua	-70.95218651611212,-16.977820672918675
+Pasco	-75.7875449643834,-10.562516673818518
+Piura	-80.30952993162616,-4.99377793335483
+Puno	-69.8251357579454,-15.346570458143123
+San Martín	-76.84181952783477,-6.519708832043513
+Tacna	-70.3348343400723,-17.60353501123209
+Tumbes	-80.56112173984202,-3.7436317286120584
+Ucayali	-74.45727524214202,-9.013219821980321
+Áncash	-77.58917372611148,-9.345583562226063
+```
+
+### 6b2 Clasificar Por Centroide Region (job 2 — "predicción" + accuracy)
+
+Igual que 6a2 pero prediciendo la Región [0] real a partir de la cercanía a los
+25 centroides de 6b1.
+```powershell
+.\hadoop.ps1 pc1 ClasificarPorCentroideRegion
+```
+> Requiere haber corrido 6b1 primero.
+
+**Que se hizo?** Corrió bien. Se confirmó también la predicción hecha antes de
+ejecutar: la exactitud salió considerablemente **más alta** que 6a2, porque las
+regiones sí son zonas geográficas compactas por definición.
+
+RESULTADO (completo)
+```powershell
+correcto	3004
+incorrecto	1943
+```
+**Accuracy = 3004 / (3004 + 1943) = 3004 / 4947 ≈ 60.73%**
+
+**Tabla comparativa de métricas — modelos de clasificación (categoría 6)**, tal
+como pide el enunciado ("elaborar una tabla donde se compare las métricas...
+para cada modelo"):
+
+| Modelo | Etiqueta predicha | # clases | Correctos | Incorrectos | Accuracy |
+|---|---|---|---|---|---|
+| 6a (Nearest Centroid) | Categoría | 5 | 1378 | 3569 | 27.85% |
+| 6b (Nearest Centroid) | Región | 25 | 3004 | 1943 | 60.73% |
+
+Interpretación: el mismo algoritmo (centroide más cercano, basado solo en
+coordenadas) predice mucho mejor la Región que la Categoría — confirma que la
+ubicación geográfica de un recurso turístico dice más sobre en qué región está
+que sobre qué tipo de recurso es.
+
+## Categoría 7: regresión (2 consultas)
+
+**Estado: ejecutado y verificado.** Las 3 corridas (7a, 7b1, 7b2) terminaron
+bien, y tanto 7a como 7b2 se verificaron de forma independiente con `awk`
+sobre el CSV crudo — coinciden exactos.
+
+**Objetivo y enfoque general:** regresión lineal simple (Y = pendiente·X +
+intercepto), calculada con la fórmula cerrada de mínimos cuadrados. En vez de
+guardar todos los puntos (X,Y) en una lista y recorrerla dos veces, el Reducer
+acumula 5 sumas en una sola pasada (`n`, `sumaX`, `sumaY`, `sumaXY`, `sumaX²`,
+`sumaY²` — y también `sumaY²` para el R²), y con esas sumas alcanza para
+calcular por álgebra tanto la pendiente/intercepto como el **R²** (qué tan bien
+se ajusta la recta) y el **error cuadrático medio / MSE** (la métrica de "loss"
+que pide el enunciado para la tabla comparativa), sin una segunda pasada.
+
+### 7a Regresion Longitud Desde Latitud
+
+Un solo job (no necesita encadenar): usa como X la Latitud [9] y como Y la
+Longitud [10] de cada uno de los ~4947 recursos con coordenadas válidas, y
+calcula la recta que mejor las relaciona.
+```powershell
+.\hadoop.ps1 pc1 RegresionLongitudDesdeLatitud
+```
+
+**Que se hizo?** Corrió bien sobre los 4947 recursos con coordenadas válidas;
+verificado de forma independiente con `awk` sobre el CSV crudo — coincide
+exacto en los 5 valores (pendiente, intercepto, R², MSE, n).
+
+RESULTADO (completo)
+```powershell
+ALL	pendiente=-0.9193459071092119 intercepto=-80.3201302965638 R2=0.6125423464836328 loss_MSE=4.876643738966836 n=4947
+```
+Interpretación: R²≈0.61 indica una relación lineal moderada-fuerte entre
+Latitud y Longitud a nivel de todo el país (tiene sentido: el territorio
+peruano es alargado en diagonal, así que moverse en latitud arrastra bastante
+la longitud también).
+
+### 7b1 Conteo Por Provincia (job 1 de la cadena)
+
+Por cada Provincia [1], cuenta cuántos recursos turísticos tiene en total, y
+con un `HashSet` cuántos Distritos [2] **distintos** hay entre esos recursos.
+Resultado chico: ~190 filas, una por provincia.
+```powershell
+.\hadoop.ps1 pc1 ConteoPorProvincia
+```
+
+**Que se hizo?** Corrió bien, dando ~190 filas (una por provincia) con
+"cantidadRecursos,cantidadDistritosDistintos".
+
+RESULTADO (extracto — últimas filas visibles de la corrida real)
+```powershell
+Utcubamba	4,2
+Victor Fajardo	26,5
+Vilcas Huaman	6,1
+Viru	5,2
+Yarowilca	2,2
+Yauli	25,4
+Yauyos	89,11
+Yungay	17,5
+Yunguyo	31,6
+Zarumilla	8,2
+```
+
+### 7b2 Regresion Recursos Por Distritos (job 2 de la cadena)
+
+Toma como **input** directamente la carpeta de salida de 7b1 (no el CSV
+original — este es un encadenado por INPUT, distinto al de la categoría 5 que
+usaba DistributedCache) y corre la misma regresión lineal que 7a, pero con X =
+cantidad de distritos distintos de la provincia e Y = cantidad de recursos de
+esa provincia — buscando responder "¿tener más distritos implica tener más
+recursos turísticos registrados?".
+
+```powershell
+$cp = (hadoop classpath)
+hadoop fs -rm -r /pc1_output/RegresionRecursosPorDistritos 2>$null
+java -cp "C:\Users\esauf\Documents\NetBeansProjects\PC1\dist\PC1.jar;$cp" RegresionRecursosPorDistritos.Driver /pc1_output/ConteoPorProvincia /pc1_output/RegresionRecursosPorDistritos
+hadoop fs -cat /pc1_output/RegresionRecursosPorDistritos/*
+```
+> Este último no usa la receta `.\hadoop.ps1 pc1 <Paquete>` porque esa receta
+> siempre usa `/pc1_input` (el CSV) como input fijo — acá el input real es la
+> salida de 7b1, así que se ejecuta el comando manual. Requiere haber corrido
+> 7b1 primero.
+
+**Que se hizo?** Corrió bien, leyendo directamente el archivo de conteos que
+dejó 7b1 en vez del CSV original. Verificado de forma independiente con `awk`
+(recalculando distritos distintos y conteos por provincia directo desde el CSV
+crudo) — coincide exacto en los 4 valores.
+
+RESULTADO (completo)
+```powershell
+ALL	pendiente=7.102514663469329 intercepto=-6.971923911986782 R2=0.665930669283448 loss_MSE=432.649803247709 n=190
+```
+Interpretación: pendiente ≈7.1 significa que, en promedio, cada distrito
+adicional en una provincia se asocia con ~7 recursos turísticos más — R²≈0.67
+indica una relación bastante fuerte entre cuántos distritos tiene una
+provincia y cuántos recursos turísticos concentra.
+
+**Tabla comparativa de métricas — modelos de regresión (categoría 7)**, tal
+como pide el enunciado:
+
+| Modelo | X (predictor) | Y (a predecir) | n | Pendiente | Intercepto | R² | Loss (MSE) |
+|---|---|---|---|---|---|---|---|
+| 7a | Latitud | Longitud | 4947 | -0.9193 | -80.3201 | 0.6125 | 4.8766 |
+| 7b | Cantidad de distritos por provincia | Cantidad de recursos por provincia | 190 | 7.1025 | -6.9719 | 0.6659 | 432.6498 |
+
+Interpretación: ambos modelos tienen un ajuste (R²) parecido (~0.61 y ~0.67),
+pero operan a escalas totalmente distintas — 7a relaciona coordenadas
+individuales de ~4947 recursos, mientras que 7b relaciona conteos agregados de
+solo 190 provincias (por eso su MSE es mucho más grande: está prediciendo
+cantidades de recursos, que varían en decenas, no coordenadas geográficas que
+varían en unidades).
+
