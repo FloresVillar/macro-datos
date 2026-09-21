@@ -1,0 +1,108 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[spanish,english]{babel}
+\usepackage{indentfirst}
+\usepackage{anysize} % Soporte para el comando \marginsize
+%\marginsize{1.5cm}{1.5cm}{0.5cm}{1cm}
+\marginsize{2,5cm}{1,8cm}{1.5cm}{1,7cm}
+\usepackage[psamsfonts]{amssymb}
+
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{multicol}
+\usepackage{multirow} 
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tocloft}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand*\contentsname{Summary}
+\renewcommand{\thepage}{}
+\theoremstyle{definition}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\begin{document}
+	
+\title{Title}
+\date{}
+\maketitle
+
+\begin{center}
+	Student:\\
+	\vspace{5pt}
+	{\large StudentNames StudentLastNames}\\
+	Universidad Nacional de Ingenier\'ia, Facultad de Ciencias,\\
+	e-mail: mail@uni.pe
+	
+\end{center}
+\vspace{5pt}
+\begin{center}
+	Curso:\\
+	\vspace{5pt}
+	{\large Codigo del Cursos y Nombre del Curso}\\
+	{\large Laboratorio 0x}\\
+	
+
+	
+\end{center}
+\vspace{20pt}
+\begin{abstract}
+{\small
+\hspace*{0.5cm}
+
+[Abstract]\\
+
+\textbf{Keywords:} key1, key2.
+}
+\end{abstract}
+
+
+
+\pagenumbering{arabic}
+
+\tableofcontents
+
+\vspace{20pt}
+\hrule
+\vspace{10pt}
+
+\section{Introduction}
+
+\section{Theoretical Framework}
+
+\subsection{Subsection}
+If necessary...
+
+\section{Methodolody (or change section name according to the work)}
+
+\section{Results and Discussion}
+
+\section{Conclusions}
+
+\section{Anexo Codigo}
+\section{Anexo Documentación}
+
+
+%\begin{center}
+%{\large \bf Agradecimientos}
+%\end{center}
+%Los autores agradecen a las autoridades de la Facultad de Ciencias de la Universidad Nacional de 
+%Ingenier\'{\i}a por su apoyo.
+%%\begin{center}
+%%{\large \bf Apendice: }
+%%\end{center}
+
+\vspace{20pt}
+\hrule
+\vspace{10pt}
+
+\nocite{*}
+%\bibliographystyle{apacite}
+\bibliographystyle{plain}
+\bibliography{Bibliog}
+\addcontentsline{toc}{chapter}{Bibliografía}
+
+%------------------------------------- References --------------------
+\end{document}
