@@ -18,10 +18,10 @@ public class Mapper extends MapReduceBase implements org.apache.hadoop.mapred.Ma
 		}
 		String linea = value.toString();
 		String[] columnas = linea.split(";");
-		if (columnas.length <= 9) {
+		if (columnas.length <= 10) {
 			return;
 		}
-		String latitudTexto = columnas[9].trim(); // columna 9 = LATITUD
+		String latitudTexto = columnas[10].trim(); // columna 10: la cabecera del CSV dice LONGITUD, pero los valores son latitudes (las columnas vienen invertidas en el dataset)
 		if (latitudTexto.isEmpty()) {
 			return; // ~1257 de las 6204 filas no tienen coordenadas registradas
 		}

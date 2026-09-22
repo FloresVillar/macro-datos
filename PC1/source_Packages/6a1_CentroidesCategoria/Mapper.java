@@ -20,8 +20,8 @@ public class Mapper extends MapReduceBase implements org.apache.hadoop.mapred.Ma
 			return;
 		}
 		String categoria = columnas[5].trim();
-		String lat = columnas[9].trim();
-		String lon = columnas[10].trim();
+		String lat = columnas[10].trim(); // columna 10: la cabecera del CSV dice LONGITUD, pero los valores son latitudes (las columnas vienen invertidas en el dataset)
+		String lon = columnas[9].trim();  // columna 9: la cabecera del CSV dice LATITUD, pero los valores son longitudes (las columnas vienen invertidas en el dataset)
 		if (lat.isEmpty() || lon.isEmpty()) {
 			return; // fila sin coordenadas
 		}
