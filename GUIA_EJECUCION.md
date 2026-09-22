@@ -1189,11 +1189,75 @@ quiera predecir:
 
 ### 6a1 Centroides Categoria (job 1 — "entrenamiento")
 
-Calcula el centroide (promedio de Latitud [9] y Longitud [10]) de cada una de
+Calcula el centroide (promedio de latitud [10] y longitud [9] — columnas invertidas en el CSV) de cada una de
 las 5 Categorías [5] generales del dataset.
 ```powershell
 .\hadoop.ps1 pc1 CentroidesCategoria
 ```
+
+```powershell
+hadoop fs -test -e /pc1_input/Inventario_recursos_turisticos.csv
+hadoop fs -mkdir -p /pc1_input
+hadoop fs -put "C:\Users\esauf\Desktop\uni\macro-datos\PC1\Inventario_recursos_turisticos.csv" /pc1_input
+$cp = (hadoop classpath)
+hadoop fs -rm -r -skipTrash /pc1_output/CentroidesCategoria 2>$null
+java -cp "C:\Users\esauf\Documents\NetBeansProjects\PC1\dist\PC1.jar;$cp" CentroidesCategoria.Driver /pc1_input /pc1_output/CentroidesCategoria
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+hadoop fs -cat "/pc1_output/CentroidesCategoria/*"
+```
+
+#### **Resultado de `java -cp PC1.jar;<classpath> CentroidesCategoria.Driver /pc1_input /pc1_output/CentroidesCategoria`**
+
+> Explicación de la corrida `job_1790104405298_0002` (ya con la corrección de
+> columnas: en el CSV la cabecera `LATITUD` [9] trae longitudes y `LONGITUD` [10]
+> trae latitudes, por eso el Mapper lee latitud de [10] y longitud de [9]).
+
+1. Limpieza de la salida anterior:
+`Deleted /pc1_output/CentroidesCategoria`
+El script borra la salida de la corrida anterior — Hadoop no deja escribir en una carpeta de output que ya existe.
+
+2. Conexión y envío del job:
+`Connecting to ResourceManager at /0.0.0.0:8032` … `Submitted application application_1790104405298_0002`
+El `Driver` se conecta al ResourceManager de YARN y le entrega el trabajo. YARN le asigna el ID `application_1790104405298_0002` (el `_0002` es porque es la 2da aplicación desde que se levantó el cluster).
+- `WARN ... Implement the Tool interface` → el `Driver` no usa `ToolRunner`, así que Hadoop no parsea opciones tipo `-D`. No afecta el resultado.
+- `resource-types.xml not found` → aviso normal, ignorable.
+- Aquí no se usa `hadoop jar` sino `java -cp` con el classpath de Hadoop (por el bug descrito antes en la guía), pero el efecto es el mismo.
+
+3. Preparación:
+`Total input files to process : 1` / `number of splits:2`
+Hadoop encuentra 1 archivo en `/pc1_input` (`Inventario_recursos_turisticos.csv`, ~1.48 MB) y lo divide en **2 splits**. A diferencia de WordCount (1 split, API nueva que corta por bloque de 128 MB), este `Driver` usa la API antigua (`org.apache.hadoop.mapred`), que reparte el archivo según el número de maps sugerido (por defecto 2).
+
+4. Ejecución (map → reduce):
+`map 0%` → `map 50%` → `map 100% reduce 0%` → `map 100% reduce 100%` → `completed successfully`
+- **Map** (2 tareas en paralelo, una por split): por cada línea del CSV salta la cabecera, separa por `;`, toma `CATEGORÍA` [5] y las coordenadas (latitud de [10], longitud de [9]). Si ambas son números válidos emite `(categoría, "lat,lon")`. El `map 50%` es un split que terminó antes que el otro.
+- **Shuffle**: Hadoop agrupa todos los pares por categoría y los ordena por key.
+- **Reduce** (1 sola tarea, `setNumReduceTasks(1)`): por cada categoría suma latitudes y longitudes y divide entre la cantidad de recursos → **centroide** (centro geográfico promedio). Un solo reducer para que todo quede en un único `part-00000`, que después lee el job 2 de la cadena (`ClasificarPorCentroideCategoria`).
+
+5. Counters (estadísticas del job):
+- `Map input records=6205` → 6205 líneas leídas del CSV (incluye la cabecera).
+- `Map output records=4947` → 4947 recursos con coordenadas válidas. Se descartaron 6205 − 1 − 4947 = **1257 filas** (sin coordenadas o no numéricas).
+- `Reduce input groups=5` → 5 keys distintas = las **5 categorías** del inventario.
+- `Reduce output records=5` → una línea de resultado por categoría.
+- `Combine input records=0` → no hay Combiner: los 4947 pares viajan completos al reducer (`Reduce shuffle bytes=282484`).
+- `Spilled Records=9894` → 2 × 4947: cada par se escribe a disco una vez del lado map y otra del lado reduce.
+- `Launched map tasks=2`, `Launched reduce tasks=1` → un map por split y un solo reducer.
+- `Bytes Read=1485077` / `Bytes Written=357` → entra ~1.4 MB de CSV y salen 357 bytes (datos muy resumidos). `Bytes Read` es 4096 bytes mayor que el CSV (1 480 981): coincide exacto con el buffer de lectura de Hadoop, probablemente porque el 1er map lee de más al pasar el límite de su split para terminar la última línea.
+- `CPU time spent=0`, `Physical memory=0` → probablemente Hadoop no los mide en Windows; no significa que no se usó CPU.
+
+6. Resultado e interpretación:
+Formato: `CATEGORÍA <TAB> latitud_promedio,longitud_promedio`
+
+| Categoría | Latitud | Longitud |
+|---|---|---|
+| 1. Sitios naturales | −11.14 | −75.13 |
+| 2. Manifestaciones culturales | −11.59 | −74.95 |
+| 3. Folclore | **−9.18** | **−76.53** |
+| 4. Realizaciones técnicas, científicas y artísticas contemporáneas | −11.51 | −74.94 |
+| 5. Acontecimientos programados | −10.02 | −76.21 |
+
+- Los 5 centroides caen en el centro del país (latitudes −9 a −11.6, longitudes −74.9 a −76.5): todas las categorías están repartidas por todo el territorio.
+- **Folclore** es la más desplazada: su centroide está más al **norte** (latitud más cerca de 0) y más al **oeste** que las demás.
+- Las categorías 1, 2 y 4 tienen centroides casi iguales (a menos de 0.5° entre sí). Para el job 6a2 esto importa: un clasificador de "centroide más cercano" va a confundir mucho esas tres categorías, porque sus centros casi coinciden.
 
 **Que se hizo?** Corrió bien y dio 5 centroides (uno por categoría),
 verificados de forma independiente con `awk` sobre el CSV crudo — coinciden
@@ -1201,18 +1265,20 @@ exactos (mismos valores hasta el 4to decimal).
 
 RESULTADO (completo, 5 filas — una por categoría)
 ```powershell
-1. SITIOS NATURALES	-75.1253,-11.1432
-2. MANIFESTACIONES CULTURALES	-74.9507,-11.5919
-3. FOLCLORE	-76.5263,-9.1836
-4. REALIZACIONES TÉCNICAS, CIENTÍFICAS Y ARTÍSTICAS CONTEMPORÁNEAS	-74.9449,-11.5125
-5. ACONTECIMIENTOS PROGRAMADOS	-76.2143,-10.0156
+Resultado (/pc1_output/CentroidesCategoria):
+1. SITIOS NATURALES     -11.143245207074864,-75.12527551308295
+2. MANIFESTACIONES CULTURALES   -11.591917577547907,-74.95071121656736
+3. FOLCLORE     -9.183603105590063,-76.52629192546577
+4. REALIZACIONES TÉCNICAS, CIENTÍFICAS Y ARTÍSTICAS CONTEMPORÁNEAS      -11.512533489028087,-74.9448518425187
+5. ACONTECIMIENTOS PROGRAMADOS  -10.015602395209584,-76.21425688622753
 ```
 
 ### 6a2 Clasificar Por Centroide Categoria (job 2 — "predicción" + accuracy)
 
-Para cada recurso, calcula la distancia a los 5 centroides de 6a1 y predice la
-categoría del centroide más cercano; compara contra la Categoría [5] real y
-cuenta aciertos/errores.
+Para cada recurso, calcula la distancia euclidiana entre sus coordenadas y los
+5 centroides de 6a1, encuentra el centroide más cercano y le asigna la categoría
+de ese centroide (categoría predicha). Luego compara esa predicción con la
+Categoría [5] real del CSV y cuenta aciertos/errores.
 ```powershell
 .\hadoop.ps1 pc1 ClasificarPorCentroideCategoria
 ```
@@ -1232,8 +1298,15 @@ incorrecto	3569
 
 ### 6b1 Centroides Region (job 1 — "entrenamiento", 25 clases)
 
-Igual que 6a1 pero calculando el centroide de cada una de las 25 Regiones [0]
-en vez de las 5 categorías.
+Mismo método que 6a1, pero agrupando por Región [0] en lugar de por Categoría [5].
+El dataset tiene 25 regiones distintas (los 24 departamentos del Perú + Callao).
+Para cada recurso con coordenadas válidas, el Mapper emite el par
+(región, "latitud,longitud") — latitud de [10] y longitud de [9], porque en el
+CSV esas columnas vienen invertidas. Hadoop agrupa todos los pares de una misma
+región y el Reducer promedia sus latitudes y sus longitudes; ese punto promedio
+es el **centroide** de la región (el "centro geográfico" de sus recursos
+turísticos). Resultado: 25 filas, una por región, que el job 6b2 usa como
+modelo para clasificar.
 ```powershell
 .\hadoop.ps1 pc1 CentroidesRegion
 ```
@@ -1256,8 +1329,10 @@ Ucayali	-74.45727524214202,-9.013219821980321
 
 ### 6b2 Clasificar Por Centroide Region (job 2 — "predicción" + accuracy)
 
-Igual que 6a2 pero prediciendo la Región [0] real a partir de la cercanía a los
-25 centroides de 6b1.
+Para cada recurso, calcula la distancia euclidiana entre sus coordenadas y los
+25 centroides de 6b1, encuentra el centroide más cercano y le asigna la región
+de ese centroide (región predicha). Luego compara esa predicción con la
+Región [0] real del CSV y cuenta aciertos/errores.
 ```powershell
 .\hadoop.ps1 pc1 ClasificarPorCentroideRegion
 ```
