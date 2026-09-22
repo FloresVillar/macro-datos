@@ -30,16 +30,15 @@ cd C:\ruta\a\este\repo
 ```
 GUIA_EJECUCION.md          <- documentación completa, paso a paso, con resultados reales
 hadoop.ps1                  <- administración del cluster + recetas de ejecución
-winutils/, mapreduce2/       <- material de instalación / fuente original del tutorial
+winutils/                    <- material de instalación de Hadoop
 
-semana_1/, semana_2/, semana_3/   <- material del curso (instalación, teoría, enunciado del lab)
-
-Ventas File-20260908/        <- código fuente SalesCountry
-MACRO-DATOS/source_Packages/   <- espejo del proyecto NetBeans "MACRO-DATOS" (SalesCountry + 11 ejercicios "SalesJam")
-PC1/source_Packages/            <- espejo del proyecto NetBeans "PC1" (Laboratorio 01 real, dataset Turismo)
+PC1/
+  Inventario_recursos_turisticos.csv   <- dataset del Laboratorio 01 (PNDA)
+  source_Packages/                      <- espejo del proyecto NetBeans "PC1" (7 categorías de consultas)
+  PC1.jar                               <- build exportado desde NetBeans, listo para `hadoop.ps1 pc1`
 ```
 
-**Los proyectos NetBeans reales viven fuera del repo**, en `C:\Users\<TU_USUARIO>\Documents\NetBeansProjects\MACRO-DATOS\` y `...\PC1\`. Las carpetas `source_Packages/` de arriba son solo copias de referencia versionadas con git.
+**El proyecto NetBeans real vive fuera del repo**, en `C:\Users\<TU_USUARIO>\Documents\NetBeansProjects\PC1\`. La carpeta `PC1/source_Packages/` de arriba es solo una copia de referencia versionada con git.
 
 ## 5. Armar el proyecto NetBeans
 
