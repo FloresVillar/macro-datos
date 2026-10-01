@@ -35,7 +35,7 @@ winutils/                    <- material de instalación de Hadoop
 PC1/
   Inventario_recursos_turisticos.csv   <- dataset del Laboratorio 01 (PNDA)
   source_Packages/                      <- espejo del proyecto NetBeans "PC1" (7 categorías de consultas)
-  PC1.jar                               <- build exportado desde NetBeans, listo para `hadoop.ps1 pc1`
+  PC1.jar                               <- build exportado desde NetBeans en una ejecución previa; para usarlo con `hadoop.ps1 pc1`, apuntar `$Jar` a este archivo
 ```
 
 **El proyecto NetBeans real vive fuera del repo**, en `C:\Users\<TU_USUARIO>\Documents\NetBeansProjects\PC1\`. La carpeta `PC1/source_Packages/` de arriba es solo una copia de referencia versionada con git.
@@ -50,6 +50,10 @@ Resumen (pasos completos y por qué en `GUIA_EJECUCION.md`, sección "## PC1"):
 4. Build del proyecto → genera `dist\PC1.jar`.
 
 ## 6. Ejecutar los ejercicios
+
+> Antes de la primera ejecución, abrir `hadoop.ps1` y en la función `Invoke-Pc1` cambiar
+> `$Jar` y `$CsvLocal` (marcados con `# CAMBIAR DE ACUERDO A LA RUTA QUE SE USE`)
+> por las rutas de tu máquina. Si Hadoop no está en `C:\Hadoop3`, cambiar también `$HadoopHome` al inicio del script.
 
 ```powershell
 .\hadoop.ps1 pc1 <NombrePaquete> [argumentoOpcional]
