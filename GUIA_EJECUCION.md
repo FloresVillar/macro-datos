@@ -601,6 +601,32 @@ RESULTADO (verificado con `grep -c "United Kingdom"` sobre el CSV, da 100 línea
 1/1/09 16:00,Product1,1200,Visa,Toni,Bolton,England,United Kingdom,10/7/08 15:19,2/3/09 16:45,53.5833333,-2.4333333	1
 ...(98 líneas más)
 ```
+
+#### 13 Pais Producto Mayor Facturacion
+
+**Pregunta:** a partir de `SalesJan2009.csv`, determinar qué país tiene el mayor
+monto acumulado en ventas de su producto con mayor facturación, mostrando el
+país, el producto y el monto total.
+
+**Objetivo y enfoque:** es una consulta encadenada (2 MapReduce), pero los dos
+jobs corren desde un solo `Driver` — el job 1 escribe en `<salida>_temp` y el
+job 2 lee de ahí. Por eso se corre igual que las demás, con una sola llamada.
+
+```powershell
+.\hadoop.ps1 salesjam PaisProductoMayorFacturacion
+```
+
+**Que se hizo ?**
+
+- Job 1 — `Mapper`: key compuesta "Pais|Producto" (columnas 7 y 1), value = Price (columna 2). `Reducer`: suma los precios → facturación total de cada par país+producto.
+- Job 2 — `MapperMaximo`: manda todas las líneas del job 1 con la key fija "Max". `ReducerMaximo`: (1) con un `HashMap` se queda con el producto de mayor facturación de cada país, y (2) entre esos, elige el país con el mayor monto.
+- En NetBeans: paquete `PaisProductoMayorFacturacion` con 5 clases (`Mapper`, `Reducer`, `MapperMaximo`, `ReducerMaximo`, `Driver`) → Build.
+
+RESULTADO
+> TODO: pegar la salida real de `.\hadoop.ps1 salesjam PaisProductoMayorFacturacion` (todavía no se corrió en el cluster de Windows).
+>
+> Verificación previa: el mismo código, compilado y corrido en modo local de Hadoop (LocalJobRunner, desde WSL), dio `United States	Product1	479000`, y coincide con un cálculo aparte hecho con un script sobre el CSV. Le siguen United States/Product2 (198000) y United Kingdom/Product1 (108000). La fila sucia con precio `"13,000"` se ignora, igual que en la consulta 7.
+
 ## PC1
 1. En netbeans crear el proyecto `PC1`
 2. Project Properties → Libraries → Compile → Add JAR/Folder, agregar solo estos 4: `C:\Hadoop3\`
