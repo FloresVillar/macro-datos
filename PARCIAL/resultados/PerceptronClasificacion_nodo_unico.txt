@@ -1,0 +1,14 @@
+Consulta: PerceptronClasificacion
+Ejecucion: nodo unico (Windows, Hadoop 3.3.0)
+Fecha: 2026-10-18 16:41:19
+Tiempo total: 1181.66 s
+
+Resultado (/parcial_output/PerceptronClasificacion):
+ejemplos_test	770
+perdida_test	0.6417
+accuracy	0.5948
+precision	0.2362
+recall	0.6183
+f1	0.3418
+accuracy_base_siempre_no	0.8299
+matriz_confusion	VP=81 FP=262 VN=377 FN=50

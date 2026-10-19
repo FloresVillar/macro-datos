@@ -1,0 +1,12 @@
+Consulta: PerceptronRegresion
+Ejecucion: nodo unico (Windows, Hadoop 3.3.0)
+Fecha: 2026-10-18 17:56:58
+Tiempo total: 1344.12 s
+
+Resultado (/parcial_output/PerceptronRegresion):
+ejemplos_test	770
+mse	0.4533
+mae	0.5311
+r2	0.0303
+mse_base_media	0.4674
+mae_heridos	1.3632

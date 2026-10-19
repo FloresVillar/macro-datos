@@ -1,0 +1,44 @@
+Consulta: AgrupamientoDBSCAN
+Ejecucion: nodo unico (Windows, Hadoop 3.3.0)
+Fecha: 2026-10-18 13:55:45
+Tiempo total: 487.89 s
+
+Resultado (/parcial_output/AgrupamientoDBSCAN):
+grupo 1	accidentes=223  centroide_lat=-11.69051  centroide_lon=-76.25282  departamento=LIMA  fallecidos=25  heridos=138  etiqueta_dbscan=002.02-086.2020 SC
+grupo 2	accidentes=56  centroide_lat=-11.90876  centroide_lon=-76.55879  departamento=LIMA  fallecidos=5  heridos=109  etiqueta_dbscan=011.02-095.2020 SC
+grupo 3	accidentes=34  centroide_lat=-15.81589  centroide_lon=-74.33202  departamento=AREQUIPA  fallecidos=4  heridos=13  etiqueta_dbscan=01.12-618.2020 SC
+grupo 4	accidentes=24  centroide_lat=-11.86164  centroide_lon=-76.41479  departamento=LIMA  fallecidos=34  heridos=56  etiqueta_dbscan=006.04-321.2020 CC
+grupo 5	accidentes=23  centroide_lat=-11.61160  centroide_lon=-76.02716  departamento=JUNIN  fallecidos=5  heridos=28  etiqueta_dbscan=008.08-460.2020 CC
+grupo 6	accidentes=21  centroide_lat=-11.71238  centroide_lon=-77.17898  departamento=LIMA  fallecidos=0  heridos=14  etiqueta_dbscan=027.06-295.2020 SC
+grupo 7	accidentes=21  centroide_lat=-11.60862  centroide_lon=-77.22697  departamento=LIMA  fallecidos=6  heridos=46  etiqueta_dbscan=012.05-344.2020 CC
+grupo 8	accidentes=21  centroide_lat=-10.66441  centroide_lon=-76.17664  departamento=PASCO  fallecidos=0  heridos=22  etiqueta_dbscan=008.08-355.2020 SC
+grupo 9	accidentes=21  centroide_lat=-11.65211  centroide_lon=-77.20654  departamento=LIMA  fallecidos=0  heridos=6  etiqueta_dbscan=001.05-235.2020 SC
+grupo 10	accidentes=17  centroide_lat=-9.34833  centroide_lon=-78.39541  departamento=ANCASH  fallecidos=1  heridos=19  etiqueta_dbscan=024.07-330.2020 SC
+grupo 11	accidentes=17  centroide_lat=-12.63337  centroide_lon=-76.66718  departamento=LIMA  fallecidos=0  heridos=27  etiqueta_dbscan=009.01-009.2020 CC
+grupo 12	accidentes=17  centroide_lat=-13.39690  centroide_lon=-76.19706  departamento=ICA  fallecidos=0  heridos=10  etiqueta_dbscan=003.02-087.2020 SC
+grupo 13	accidentes=15  centroide_lat=-16.05431  centroide_lon=-71.34374  departamento=AREQUIPA  fallecidos=1  heridos=14  etiqueta_dbscan=015.08-362.2020 SC
+grupo 14	accidentes=14  centroide_lat=-11.56420  centroide_lon=-77.26721  departamento=LIMA  fallecidos=1  heridos=6  etiqueta_dbscan=023.09-530.2020 CC
+grupo 15	accidentes=13  centroide_lat=-11.39908  centroide_lon=-77.40267  departamento=LIMA  fallecidos=3  heridos=13  etiqueta_dbscan=22.12-811.2020 CC
+grupo 16	accidentes=13  centroide_lat=-12.24343  centroide_lon=-76.93601  departamento=LIMA  fallecidos=2  heridos=12  etiqueta_dbscan=053.01-053.2020 CC
+grupo 17	accidentes=13  centroide_lat=-10.41325  centroide_lon=-77.96099  departamento=ANCASH  fallecidos=2  heridos=16  etiqueta_dbscan=001.04-316.2020 CC
+grupo 18	accidentes=12  centroide_lat=-14.68806  centroide_lon=-75.12430  departamento=ICA  fallecidos=4  heridos=7  etiqueta_dbscan=7121000076 CC
+grupo 19	accidentes=12  centroide_lat=-11.87434  centroide_lon=-77.12647  departamento=CALLAO  fallecidos=5  heridos=49  etiqueta_dbscan=020.05-254.2020 SC
+grupo 20	accidentes=11  centroide_lat=-16.09196  centroide_lon=-71.60395  departamento=AREQUIPA  fallecidos=0  heridos=7  etiqueta_dbscan=31.11-579.2020 SC
+grupo 21	accidentes=11  centroide_lat=-8.44595  centroide_lon=-78.74216  departamento=LA LIBERTAD  fallecidos=5  heridos=9  etiqueta_dbscan=051.01-051.2020 SC
+grupo 22	accidentes=10  centroide_lat=-15.88596  centroide_lon=-74.16702  departamento=AREQUIPA  fallecidos=0  heridos=4  etiqueta_dbscan=7121000677 SC
+grupo 23	accidentes=10  centroide_lat=-16.52695  centroide_lon=-71.77835  departamento=AREQUIPA  fallecidos=1  heridos=7  etiqueta_dbscan=7121000382 SC
+grupo 24	accidentes=10  centroide_lat=-12.02930  centroide_lon=-76.99198  departamento=LIMA  fallecidos=3  heridos=7  etiqueta_dbscan=7121000216 CC
+grupo 25	accidentes=10  centroide_lat=-12.38803  centroide_lon=-76.76745  departamento=LIMA  fallecidos=1  heridos=8  etiqueta_dbscan=7121000179 CC
+grupo 26	accidentes=10  centroide_lat=-9.24723  centroide_lon=-78.44252  departamento=ANCASH  fallecidos=0  heridos=5  etiqueta_dbscan=16.01-01.2021CC
+grupo 27	accidentes=10  centroide_lat=-8.97089  centroide_lon=-78.62245  departamento=ANCASH  fallecidos=6  heridos=3  etiqueta_dbscan=078.02-188.2020 CC
+grupo 28	accidentes=10  centroide_lat=-11.61436  centroide_lon=-75.97929  departamento=JUNIN  fallecidos=1  heridos=8  etiqueta_dbscan=075.01-075.2020 SC
+grupo 29	accidentes=10  centroide_lat=-16.59468  centroide_lon=-72.63070  departamento=AREQUIPA  fallecidos=1  heridos=32  etiqueta_dbscan=035.03-189.2020 SC
+grupo 30	accidentes=10  centroide_lat=-16.54476  centroide_lon=-72.58303  departamento=AREQUIPA  fallecidos=1  heridos=9  etiqueta_dbscan=005.05-337.2020 CC
+ruido	accidentes=3133  fallecidos=977  heridos=4795
+
+Metricas (/parcial_output/AgrupamientoDBSCAN_metricas):
+grupos	30
+puntos_agrupados	699
+puntos_ruido	3133
+silhouette	0.6443
+davies_bouldin	0.2100
