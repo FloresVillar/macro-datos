@@ -1,0 +1,24 @@
+﻿1	PUNO  via=PE-34H  accidentes=19  fallecidos=17  heridos=78  indice=6.7895
+2	ANCASH  via=AN-107  accidentes=8  fallecidos=2  heridos=39  indice=5.6250
+3	PIURA  via=PE-04B  accidentes=9  fallecidos=6  heridos=31  indice=5.4444
+4	HUANCAVELICA  via=PE-28A  accidentes=13  fallecidos=8  heridos=46  indice=5.3846
+5	TACNA  via=PE-1SD  accidentes=11  fallecidos=9  heridos=32  indice=5.3636
+6	CALLAO  via=VIA URBANA  accidentes=10  fallecidos=5  heridos=36  indice=5.1000
+7	JUNIN  via=PE-3SB  accidentes=9  fallecidos=4  heridos=33  indice=5.0000
+8	LA LIBERTAD  via=VIA URBANA  accidentes=6  fallecidos=8  heridos=5  indice=4.8333
+9	LAMBAYEQUE  via=PE-1N  accidentes=74  fallecidos=21  heridos=255  indice=4.2973
+10	CUSCO  via=VIA URBANA  accidentes=7  fallecidos=3  heridos=16  indice=3.5714
+11	LIMA  via=PE-16  accidentes=8  fallecidos=1  heridos=25  indice=3.5000
+12	TUMBES  via=PE-1N  accidentes=9  fallecidos=4  heridos=17  indice=3.2222
+13	AMAZONAS  via=PE-5N  accidentes=28  fallecidos=12  heridos=51  indice=3.1071
+14	UCAYALI  via=PE-5N  accidentes=19  fallecidos=11  heridos=24  indice=3.0000
+15	ICA  via=PE-28A  accidentes=6  fallecidos=3  heridos=6  indice=2.5000
+16	AREQUIPA  via=PE-34A  accidentes=133  fallecidos=45  heridos=196  indice=2.4887
+17	AYACUCHO  via=PE-3S  accidentes=11  fallecidos=1  heridos=24  indice=2.4545
+18	CAJAMARCA  via=PE-3N  accidentes=39  fallecidos=17  heridos=35  indice=2.2051
+19	SAN MARTIN  via=PE-5N  accidentes=68  fallecidos=12  heridos=109  indice=2.1324
+20	MOQUEGUA  via=PE-36A  accidentes=19  fallecidos=8  heridos=16  indice=2.1053
+21	APURIMAC  via=PE-30A  accidentes=46  fallecidos=5  heridos=62  indice=1.6739
+22	MADRE DE DIOS  via=PE-30C  accidentes=39  fallecidos=14  heridos=18  indice=1.5385
+23	HUANUCO  via=PE-5N  accidentes=24  fallecidos=7  heridos=14  indice=1.4583
+24	PASCO  via=PE-3N  accidentes=62  fallecidos=4  heridos=52  indice=1.0323

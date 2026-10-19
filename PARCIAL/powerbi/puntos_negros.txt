@@ -1,0 +1,45 @@
+﻿1	PE-1S  km=600-610  departamento=AREQUIPA  accidentes=30  fallecidos=4  heridos=10  media_via=5.3171  desv_via=4.7307  z=5.2177  lat=-15.81491  lon=-74.33192
+2	PE-3N  km=130-140  departamento=PASCO  accidentes=25  fallecidos=0  heridos=23  media_via=3.6032  desv_via=4.4169  z=4.8443  lat=-10.56534  lon=-76.26519
+3	PE-3S  km=0-10  departamento=JUNIN  accidentes=13  fallecidos=1  heridos=19  media_via=2.8750  desv_via=2.6535  z=3.8157  lat=-11.60724  lon=-75.81786
+4	PE-3S  km=50-60  departamento=JUNIN  accidentes=12  fallecidos=6  heridos=22  media_via=2.8750  desv_via=2.6535  z=3.4388  lat=-11.80757  lon=-75.63332
+5	PE-5N  km=650-660  departamento=SAN MARTIN  accidentes=10  fallecidos=1  heridos=11  media_via=2.5690  desv_via=2.2137  z=3.3569  lat=-7.14131  lon=-76.37995
+6	PE-28A  km=300-310  departamento=AYACUCHO  accidentes=5  fallecidos=0  heridos=8  media_via=1.8182  desv_via=0.9833  z=3.2358  lat=-13.26399  lon=-74.31239
+7	PE-30C  km=320-330  departamento=MADRE DE DIOS  accidentes=5  fallecidos=3  heridos=2  media_via=1.7500  desv_via=1.0221  z=3.1798  lat=-12.88506  lon=-69.96639
+8	PE-1N  km=390-400  departamento=ANCASH  accidentes=21  fallecidos=4  heridos=25  media_via=6.5495  desv_via=4.7850  z=3.0199  lat=-9.35756  lon=-78.39191
+9	PE-30A  km=70-80  departamento=AYACUCHO  accidentes=10  fallecidos=2  heridos=11  media_via=2.9714  desv_via=2.3602  z=2.9779  lat=-14.69735  lon=-74.52026
+10	PE-34A  km=120-130  departamento=AREQUIPA  accidentes=18  fallecidos=1  heridos=16  media_via=6.4333  desv_via=3.9046  z=2.9624  lat=-16.03707  lon=-71.32374
+11	PE-5N  km=480-490  departamento=HUANUCO  accidentes=9  fallecidos=4  heridos=3  media_via=2.5690  desv_via=2.2137  z=2.9051  lat=-8.12931  lon=-76.32888
+12	PE-5N  km=370-380  departamento=UCAYALI  accidentes=9  fallecidos=4  heridos=5  media_via=2.5690  desv_via=2.2137  z=2.9051  lat=-7.47187  lon=-76.42303
+13	PE-18C  km=10-20  departamento=UCAYALI  accidentes=9  fallecidos=1  heridos=10  media_via=2.6154  desv_via=2.2374  z=2.8536  lat=-8.63793  lon=-74.92553
+14	PE-36A  km=40-50  departamento=MOQUEGUA  accidentes=4  fallecidos=3  heridos=0  media_via=1.5500  desv_via=0.8646  z=2.8337  lat=-17.05304  lon=-70.84536
+15	PE-1N  km=80-90  departamento=LIMA  accidentes=20  fallecidos=3  heridos=11  media_via=6.5495  desv_via=4.7850  z=2.8110  lat=-11.19991  lon=-77.46907
+16	PE-1SD  km=0-10  departamento=AREQUIPA  accidentes=8  fallecidos=2  heridos=18  media_via=2.6667  desv_via=1.9355  z=2.7556  lat=-16.97246  lon=-72.14310
+17	PE-34H  km=40-50  departamento=PUNO  accidentes=3  fallecidos=0  heridos=2  media_via=1.3571  desv_via=0.6103  z=2.6919  lat=-15.25665  lon=-69.86323
+18	PE-3S  km=20-30  departamento=JUNIN  accidentes=10  fallecidos=3  heridos=16  media_via=2.8750  desv_via=2.6535  z=2.6851  lat=-11.65199  lon=-75.79884
+19	PE-1S  km=90-100  departamento=LIMA  accidentes=18  fallecidos=2  heridos=19  media_via=5.3171  desv_via=4.7307  z=2.6810  lat=-12.74367  lon=-76.60929
+20	PE-1S  km=50-60  departamento=LIMA  accidentes=18  fallecidos=1  heridos=26  media_via=5.3171  desv_via=4.7307  z=2.6810  lat=-12.43902  lon=-76.75415
+21	PE-34B  km=200-210  departamento=PUNO  accidentes=3  fallecidos=0  heridos=5  media_via=1.4583  desv_via=0.5758  z=2.6772  lat=-13.93219  lon=-70.49483
+22	PE-1N  km=510-520  departamento=LA LIBERTAD  accidentes=19  fallecidos=6  heridos=12  media_via=6.5495  desv_via=4.7850  z=2.6020  lat=-8.44401  lon=-78.75236
+23	PE-3N  km=40-50  departamento=JUNIN  accidentes=15  fallecidos=1  heridos=33  media_via=3.6032  desv_via=4.4169  z=2.5803  lat=-10.83565  lon=-76.20262
+24	PE-3N  km=30-40  departamento=JUNIN  accidentes=15  fallecidos=1  heridos=17  media_via=3.6032  desv_via=4.4169  z=2.5803  lat=-10.72359  lon=-76.26468
+25	PE-5S  km=10-20  departamento=JUNIN  accidentes=5  fallecidos=1  heridos=7  media_via=2.4545  desv_via=0.9875  z=2.5776  lat=-10.95144  lon=-75.25695
+26	PE-30A  km=100-110  departamento=AYACUCHO  accidentes=9  fallecidos=1  heridos=4  media_via=2.9714  desv_via=2.3602  z=2.5542  lat=-14.64547  lon=-74.30487
+27	PE-08  km=160-170  departamento=CAJAMARCA  accidentes=6  fallecidos=0  heridos=12  media_via=2.2941  desv_via=1.4858  z=2.4942  lat=-7.23990  lon=-78.48087
+28	PE-1S  km=70-80  departamento=LIMA  accidentes=17  fallecidos=0  heridos=21  media_via=5.3171  desv_via=4.7307  z=2.4696  lat=-12.59511  lon=-76.67851
+29	PE-34A  km=0-10  departamento=AREQUIPA  accidentes=16  fallecidos=9  heridos=46  media_via=6.4333  desv_via=3.9046  z=2.4501  lat=-16.51843  lon=-71.75194
+30	PE-1N  km=240-250  departamento=ANCASH  accidentes=18  fallecidos=4  heridos=21  media_via=6.5495  desv_via=4.7850  z=2.3930  lat=-10.41790  lon=-77.95143
+31	PE-3S  km=40-50  departamento=JUNIN  accidentes=9  fallecidos=0  heridos=15  media_via=2.8750  desv_via=2.6535  z=2.3083  lat=-11.77430  lon=-75.70109
+32	PE-3S  km=30-40  departamento=JUNIN  accidentes=9  fallecidos=2  heridos=11  media_via=2.8750  desv_via=2.6535  z=2.3083  lat=-11.71622  lon=-75.75359
+33	PE-22  km=100-110  departamento=LIMA  accidentes=50  fallecidos=4  heridos=35  media_via=19.8421  desv_via=13.3269  z=2.2629  lat=-11.70740  lon=-76.26455
+34	PE-1S  km=860-870  departamento=AREQUIPA  accidentes=16  fallecidos=1  heridos=14  media_via=5.3171  desv_via=4.7307  z=2.2582  lat=-16.55778  lon=-72.60292
+35	PE-10A  km=60-70  departamento=LA LIBERTAD  accidentes=6  fallecidos=3  heridos=9  media_via=2.1000  desv_via=1.7578  z=2.2186  lat=-7.95273  lon=-78.61872
+36	PE-16  km=110-120  departamento=ANCASH  accidentes=8  fallecidos=1  heridos=9  media_via=3.1000  desv_via=2.2113  z=2.2159  lat=-10.15276  lon=-77.31806
+37	PE-30C  km=270-280  departamento=MADRE DE DIOS  accidentes=4  fallecidos=1  heridos=0  media_via=1.7500  desv_via=1.0221  z=2.2014  lat=-12.97101  lon=-70.33763
+38	PE-1N  km=90-100  departamento=LIMA  accidentes=17  fallecidos=1  heridos=27  media_via=6.5495  desv_via=4.7850  z=2.1840  lat=-11.47345  lon=-77.31810
+39	PE-08B  km=10-20  departamento=CAJAMARCA  accidentes=4  fallecidos=0  heridos=2  media_via=1.8571  desv_via=0.9897  z=2.1651  lat=-7.15120  lon=-78.41259
+40	PE-30A  km=300-310  departamento=APURIMAC  accidentes=8  fallecidos=1  heridos=2  media_via=2.9714  desv_via=2.3602  z=2.1306  lat=-14.50305  lon=-73.26252
+41	PE-30A  km=180-190  departamento=AYACUCHO  accidentes=8  fallecidos=0  heridos=2  media_via=2.9714  desv_via=2.3602  z=2.1306  lat=-14.63834  lon=-74.04407
+42	PE-1S  km=80-90  departamento=LIMA  accidentes=15  fallecidos=1  heridos=22  media_via=5.3171  desv_via=4.7307  z=2.0468  lat=-12.66164  lon=-76.65907
+43	PE-1S  km=180-190  departamento=ICA  accidentes=15  fallecidos=0  heridos=10  media_via=5.3171  desv_via=4.7307  z=2.0468  lat=-13.39470  lon=-76.19826
+44	PE-5N  km=450-460  departamento=HUANUCO  accidentes=7  fallecidos=0  heridos=5  media_via=2.5690  desv_via=2.2137  z=2.0017  lat=-9.20020  lon=-75.80595
+45	PE-5N  km=390-400  departamento=SAN MARTIN  accidentes=7  fallecidos=5  heridos=22  media_via=2.5690  desv_via=2.2137  z=2.0017  lat=-7.09393  lon=-76.73468
