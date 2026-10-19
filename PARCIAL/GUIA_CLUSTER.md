@@ -50,136 +50,67 @@ Si dice `False`, saltar al Paso 1. Si dice `True`, VirtualBox no puede usar VT-x
 
 ### 0.1 Desactivar (antes de usar VirtualBox)
 
-1. En **PowerShell como administrador** (clic derecho en Inicio → "Terminal (Administrador)"):
+**Atajo** (PowerShell como administrador; la receta corre los mismos comandos del paso 1, el paso 2 de Configuración sigue siendo manual):
+
+```powershell
+cd C:\Users\esauf\Desktop\uni\macro-datos\PARCIAL
+.\parcial.ps1 hyperv-off
+# Inicio -> Reiniciar; luego, otra vez en PARCIAL:
+cd C:\Users\esauf\Desktop\uni\macro-datos\PARCIAL
+.\parcial.ps1 hyperv-check      # debe decir False / 0
+```
+
+**Sin la receta (paso a paso manual).** El bloque del paso 1 es exactamente lo que ejecuta `hyperv-off`; está aquí solo como referencia o por si `parcial.ps1` no está a mano. Con el atajo de arriba **no hace falta** correrlo. En conjunto, impide que Windows cargue su hipervisor y VBS al arrancar (incluido lo que los volvía a encender: Windows Hello y Credential Guard), para que VirtualBox use el procesador directamente.
+
+1. En **PowerShell como administrador** (clic derecho en Inicio → "Terminal (Administrador)"; lo mismo que `hyperv-off`):
 
 ```powershell
 wsl --shutdown
-bcdedit /set hypervisorlaunchtype off
+bcdedit /set hypervisorlaunchtype off                     # el arranque no carga el hipervisor
+bcdedit /set "{current}" vsmlaunchtype Off                # ni VSM (VBS)
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard" /v EnableVirtualizationBasedSecurity /t REG_DWORD /d 0 /f
-reg add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\SecureBiometrics" /v Enabled /t REG_DWORD /d 0 /f
-dism /online /disable-feature /featurename:VirtualMachinePlatform /norestart
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard" /v RequirePlatformSecurityFeatures /t REG_DWORD /d 0 /f
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\SecureBiometrics" /v Enabled /t REG_DWORD /d 0 /f   # Windows Hello: vuelve a encender VBS
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\WindowsHello" /v Enabled /t REG_DWORD /d 0 /f
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\Lsa" /v LsaCfgFlags /t REG_DWORD /d 0 /f                                     # Credential Guard
+dism /online /disable-feature /featurename:VirtualMachinePlatform /norestart   # si dice que no existe, ignorarlo
 dism /online /disable-feature /featurename:HypervisorPlatform /norestart
 dism /online /disable-feature /featurename:Microsoft-Hyper-V-All /norestart
+bcdedit /enum "{current}" | findstr /i "hypervisor vsm"   # debe decir Off en las dos
 ```
 
-   Si `dism` dice que una característica no existe, ignorarlo.
-
-   **Antes de reiniciar, comprobar que el `bcdedit` quedó aplicado** (en la misma terminal de administrador) **(agregado)**:
+2. Si aparece, desactivar también **Configuración → Cuentas → Opciones de inicio de sesión → Inicio de sesión mejorado** (en este equipo no aparece; por eso se apaga desde el registro con `WindowsHello` y `SecureBiometrics`). El 0.2 lo vuelve a activar.
+3. **Reiniciar** con **Inicio → Reiniciar** (no Apagar: con el inicio rápido no recarga la configuración de arranque).
+4. Comprobar (PowerShell normal):
 
 ```powershell
-bcdedit /enum "{current}" | findstr /i hypervisor   # debe mostrar: hypervisorlaunchtype    Off
+(Get-CimInstance Win32_ComputerSystem).HypervisorPresent   # False
+(Get-CimInstance -Namespace root\Microsoft\Windows\DeviceGuard -ClassName Win32_DeviceGuard).VirtualizationBasedSecurityStatus   # 0
 ```
 
-   Si no muestra nada, el valor sigue en `Auto` (el predeterminado) y el hipervisor se volverá a cargar aunque todas las características de Hyper-V estén deshabilitadas. Pasó el 2026-10-17: las características quedaron en `Deshabilitado`, pero `bcdedit` no se aplicó, y después de reiniciar `HypervisorPresent` siguió en `True`. Volver a correr `bcdedit /set hypervisorlaunchtype off` y repetir la comprobación.
+   Al encender una VM debe aparecer el ícono de chip "V" en lugar de la tortuga verde. Si se usa huella o cara para entrar a Windows, puede pedir registrarlas de nuevo; el PIN sigue funcionando.
 
-2. **Reiniciar el PC** con **Inicio → Reiniciar**, no con Apagar: con el inicio rápido de Windows, Apagar no recarga la configuración de arranque.
-3. Comprobar que `HypervisorPresent` diga `False`. Al encender una VM debe aparecer el ícono de chip "V" en lugar de la tortuga verde.
-
-#### Si `HypervisorPresent` sigue en `True` después de reiniciar **(agregado)**
-
-Pasó el 2026-10-17. `hypervisorlaunchtype` estaba en `Off`, la Integridad de memoria estaba desactivada y se había reiniciado varias veces, pero el hipervisor seguía cargado y la VM se colgaba en `Loading essential drivers`. Diagnóstico, en PowerShell normal:
-
-```powershell
-(Get-CimInstance Win32_ComputerSystem).HypervisorPresent      # True = hipervisor cargado
-$dg = Get-CimInstance -Namespace root\Microsoft\Windows\DeviceGuard -ClassName Win32_DeviceGuard
-$dg.VirtualizationBasedSecurityStatus                         # 0 = VBS apagado, 1 = habilitado, 2 = corriendo
-Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\*' | Select-Object PSChildName, Enabled
-```
-
-Resultado en este equipo:
-
-| Comprobación | Valor |
-|---|---|
-| `HypervisorPresent` | `True` |
-| `VirtualizationBasedSecurityStatus` | `2` (VBS corriendo) |
-| `EnableVirtualizationBasedSecurity` (registro) | `0` |
-| `HypervisorEnforcedCodeIntegrity` (Integridad de memoria) | `0` |
-| `SecureBiometrics` | `1` |
-| `WindowsHello` | `1` |
-| Características de Hyper-V, Plataforma de máquina virtual, WSL, Sandbox, Containers (`Get-WindowsOptionalFeature`, como administrador) | Ninguna habilitada |
-
-VBS seguía corriendo aunque en el registro estaba apagado. Lo único activo que puede encenderlo por su cuenta es la **biometría segura de Windows Hello** (`SecureBiometrics = 1`). En la Configuración de Windows de este equipo no aparece la opción "Iniciar sesión con seguridad mejorada", así que se desactiva desde el registro, en **PowerShell como administrador**:
-
-```powershell
-reg add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\SecureBiometrics" /v Enabled /t REG_DWORD /d 0 /f
-reg add "HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard" /v EnableVirtualizationBasedSecurity /t REG_DWORD /d 0 /f
-```
-
-Luego reiniciar con **Inicio → Reiniciar** y volver a comprobar `HypervisorPresent`. Si se usa huella o cara para entrar a Windows, puede pedir registrarlas de nuevo; el PIN sigue funcionando.
-
-#### Segundo diagnóstico: sigue en `True` con `SecureBiometrics = 0` **(agregado)**
-
-Pasó el 2026-10-17. Después de reiniciar, `HypervisorPresent` seguía en `True`. Comandos usados, en **PowerShell como administrador**:
-
-```powershell
-# 1. ¿El arranque carga el hipervisor?
-bcdedit /enum "{current}" | findstr -i hypervisorlaunchtype
-
-# 2. ¿VBS está corriendo y qué servicios usa?
-Get-CimInstance -Namespace root\Microsoft\Windows\DeviceGuard -ClassName Win32_DeviceGuard |
-  Select-Object VirtualizationBasedSecurityStatus, SecurityServicesRunning
-Get-CimInstance -Namespace root\Microsoft\Windows\DeviceGuard -ClassName Win32_DeviceGuard |
-  Select-Object SecurityServicesConfigured, VirtualizationBasedSecurityProperties
-
-# 3. ¿Hay características de virtualización habilitadas?
-Get-WindowsOptionalFeature -Online |
-  Where-Object { $_.FeatureName -match 'Hyper-V|VirtualMachinePlatform|HypervisorPlatform|Subsystem-Linux|Containers' -and $_.State -eq 'Enabled' } |
-  Select-Object FeatureName
-
-# 4. Registro y directivas de DeviceGuard
-Get-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard -ErrorAction SilentlyContinue
-Get-ChildItem HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios -ErrorAction SilentlyContinue |
-  ForEach-Object { "{0} -> Enabled={1}" -f $_.PSChildName, (Get-ItemProperty $_.PSPath).Enabled }
-Get-ItemProperty HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard -ErrorAction SilentlyContinue
-```
-
-Cómo leer el resultado:
-
-| Resultado | Qué mantiene el hipervisor | Cómo apagarlo |
-|---|---|---|
-| `hypervisorlaunchtype Auto` | La configuración de arranque | `bcdedit /set hypervisorlaunchtype off` |
-| `VirtualizationBasedSecurityStatus = 2` | VBS (levanta el hipervisor aunque `hypervisorlaunchtype` esté en `Off`) | Ver los comandos de abajo |
-| Aparece alguna característica en el punto 3 | Esa característica de Windows | `Disable-WindowsOptionalFeature -Online -FeatureName <nombre>` |
-
-Resultado en este equipo:
-
-| Comprobación | Valor |
-|---|---|
-| `hypervisorlaunchtype` | `Off` |
-| `VirtualizationBasedSecurityStatus` | `2` (VBS corriendo) |
-| `SecurityServicesRunning` / `SecurityServicesConfigured` | `{0}` / `{0}` (ningún servicio de seguridad) |
-| Características de virtualización | Ninguna habilitada |
-| `DeviceGuard`: `EnableVirtualizationBasedSecurity` | `0` |
-| `DeviceGuard`: `WasEnabledBy`, `RequireMicrosoftSignedBootChain` | `1`, `1` |
-| `Scenarios`: `HypervisorEnforcedCodeIntegrity`, `KernelShadowStacks`, `SecureBiometrics` | `0`, `0`, `0` |
-| `Scenarios\WindowsHello` | `1` |
-| Directiva `HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard` | No existe |
-
-VBS corre "en vacío": no hay servicios de seguridad que lo usen y el registro lo tiene apagado. Lo único que queda activo es la protección de Windows Hello (`Scenarios\WindowsHello = 1`). Se apaga eso, se fuerzan los demás valores a `0` y se impide que el arranque cargue VSM. En **PowerShell como administrador**:
-
-```powershell
-$dg = 'HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard'
-Set-ItemProperty "$dg\Scenarios\WindowsHello" -Name Enabled -Value 0 -Type DWord
-Set-ItemProperty $dg -Name RequirePlatformSecurityFeatures -Value 0 -Type DWord
-Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\Lsa -Name LsaCfgFlags -Value 0 -Type DWord   # Credential Guard
-bcdedit /set "{current}" vsmlaunchtype Off
-```
-
-Si aparece, desactivar también **Configuración → Cuentas → Opciones de inicio de sesión → Inicio de sesión mejorado**. Después, **Inicio → Reiniciar** y comprobar:
-
-```powershell
-(Get-CimInstance Win32_ComputerSystem).HypervisorPresent   # debe decir False
-(Get-CimInstance -Namespace root\Microsoft\Windows\DeviceGuard -ClassName Win32_DeviceGuard).VirtualizationBasedSecurityStatus   # debe decir 0
-```
-
-**Resultado (2026-10-17):** después de reiniciar, `HypervisorPresent` dio `False` y `VirtualizationBasedSecurityStatus` dio `0`. Con esto el hipervisor quedó apagado. Si en otro equipo sigue en `True` y `2`, VBS puede estar bloqueado en UEFI: entonces el registro no alcanza, y hay que usar la herramienta `DG_Readiness_Tool` de Microsoft o desactivar la virtualización en la BIOS.
+**Resultado (2026-10-17):** `HypervisorPresent` = `False`, `VirtualizationBasedSecurityStatus` = `0`. Hicieron falta varios reinicios hasta encontrar que VBS seguía corriendo por Windows Hello (`SecureBiometrics`, `WindowsHello`) aunque el registro lo tenía apagado; el bloque de arriba ya incluye todo. Si en otro equipo sigue en `True` / `2`, VBS puede estar bloqueado en UEFI: usar `DG_Readiness_Tool` de Microsoft o desactivar la virtualización en la BIOS.
 
 ### 0.2 Reactivar WSL2 (al terminar el proyecto)
 
-Hacerlo cuando ya no se necesiten las VM. Si en medio del proyecto hace falta WSL para el trabajo, reactivarlo igual y repetir el 0.1 antes de volver a VirtualBox.
+**Atajo** (PowerShell como administrador; la receta corre los mismos comandos del paso 2, el Inicio de sesión mejorado del paso 3 sigue siendo manual):
+
+```powershell
+cd C:\Users\esauf\Desktop\uni\macro-datos\PARCIAL
+.\parcial.ps1 hyperv-on
+# reactivar el Inicio de sesión mejorado (paso 3) si se desactivó; Inicio -> Reiniciar; luego:
+cd C:\Users\esauf\Desktop\uni\macro-datos\PARCIAL
+.\parcial.ps1 hyperv-check      # debe decir True / 2
+wsl -l -v                       # distros con VERSION 2
+```
+
+WSL2 y VirtualBox no funcionan a la vez: hay que alternar. Para usar WSL2: `hyperv-on` y reiniciar. Para volver a las VM: `hyperv-off` y reiniciar. Hacerlo de forma definitiva al terminar el proyecto (después de la exposición).
+
+**Sin la receta (paso a paso manual).** El bloque de comandos del paso 2 es exactamente lo que ejecuta `hyperv-on`; está aquí solo como referencia o por si `parcial.ps1` no está a mano. Con el atajo de arriba **no hace falta** correrlo. En conjunto, deshace el 0.1: vuelve a encender el hipervisor de Windows y VBS, devuelve Windows Hello a como estaba y reactiva las características de virtualización que WSL2 necesita.
 
 1. Cerrar VirtualBox y apagar todas las VM.
-2. En **PowerShell como administrador**:
+2. En **PowerShell como administrador** (lo mismo que `hyperv-on`):
 
 ```powershell
 bcdedit /set hypervisorlaunchtype auto
@@ -1418,15 +1349,12 @@ Se mide con `PuntosNegrosPorTramo`, la consulta más rápida (147.6 s en clúste
 
    | # | Gráfico | Tabla | Visual y casillas |
    |---|---|---|---|
-   | 1 | Accidentes por grupo DBSCAN (opcional) | dbscan_puntos | Mapa: Latitud = lat, Longitud = lon, Leyenda = grupo; `-1` (ruido) en gris |
+   | 1 | Accidentes por grupo DBSCAN (obligatorio) | dbscan_puntos | Mapa: Latitud = lat, Longitud = lon, Leyenda = grupo; `-1` (ruido) en gris |
    | 2 | Zonas críticas (hecho; basta para el requisito "al menos un gráfico con coordenadas y agrupamiento") | dbscan_grupos | Mapa: Latitud = centroide_lat, Longitud = centroide_lon, Tamaño de burbuja = accidentes, Leyenda = grupo |
    | 3 | Puntos negros | puntos_negros | Mapa: lat / lon, Tamaño = z, Información sobre herramientas = via, km |
    | 4 | Severidad por departamento | severidad | Barras: Eje Y = departamento, Eje X = indice |
    | 5 | Curva de pérdida | curvas | Líneas: Eje X = época, Eje Y = pérdida |
    | 6 | Tiempos clúster vs. nodo único | tabla 2.4.1 (Inicio → Especificar datos) | Barras agrupadas: Eje = consulta, Valores = tiempo clúster y tiempo nodo único |
-
-   - Mapa en blanco con "establezca el agregado para Latitud y Longitud en No resumir": Power BI pone "Promedio de …" y junta todo en un punto. En la casilla Latitud → flechita ⌄ → **No resumir**; igual en Longitud. Para que no vuelva a pasar: Vista de tabla → encabezado de la columna → Herramientas de columnas → Resumen = No resumir.
-   - Capturas: `PARCIAL/imagenes/Desarrollo_2_4_3_POWER_BI_MAPA.png` (promedio: mapa en blanco), `PARCIAL/imagenes/Desarrollo_2_4_3_POWER_BI_POR_FIN_TABLA.png` (tabla correcta, 31 valores distintos) y `PARCIAL/imagenes/Desarrollo_2_4_3_POWER_BI_LATITUD_LONGITUD_MAPA.png` (mapa final).
 
 5. Entregables (obligatorios): Archivo → Guardar como → `PARCIAL\powerbi\parcial.pbix`; cada gráfico → "..." del visual → Exportar → imagen, o captura 📷 → `PARCIAL\imagenes\Desarrollo_2_4_3_POWERBI_<n>.png` (para la sección 6.5 del informe y la presentación).
 
