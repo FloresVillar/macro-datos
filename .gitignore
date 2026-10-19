@@ -1,2 +1,6 @@
 winutils/
 historial_agente/
+.playwright-mcp/
+
+*.iso
+.~lock.*
