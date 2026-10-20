@@ -19,7 +19,7 @@ La otra guía de `semana_7/` (`Instalacion_y_Configuracion_de_Hadoop_3_en_cluste
 ## Antes de empezar
 
 - **ISO disponible:** `PARCIAL/ubuntu-26.04.1-live-server-amd64.iso`. La guía usa Java 11 (`openjdk-11-jdk`), y Hadoop 3.3.6 solo corre con Java 8 u 11. Ubuntu 26.04 (resolute) sí incluye `openjdk-11-jdk` en sus repositorios: versión `11.0.32.1+1-1ubuntu1~26.04` para amd64, según packages.ubuntu.com (consultado el 2026-10-17). El `apt-cache policy` del paso 2.1 lo confirma dentro de la VM. **(agregado)**
-- **RAM del equipo anfitrión** (ASUS ExpertBook P1503CVA, capturas `imagenes/CUANTA_RAM_TENGO.png` y `imagenes/CUANTA_MEMORIA_RAM_USAN_PROCESOS.png`): 16 GB instalados, 5,08 GB libres al momento de la captura (uso 68 %). Las 3 VM suman 6 GB. Con el Paso 0, WSL ya queda apagado. Cerrar Chrome, VS Code, Edge y Teams libera unos 2,9 GB; cerrar WSL y VS Code corta la sesión de trabajo con Claude Code, así que conviene hacerlo solo para las mediciones. Si aún falta, bajar los workers a 1,5 GB. **(agregado)**
+- **RAM del equipo anfitrión** (ASUS ExpertBook P1503CVA, capturas [`imagenes/CUANTA_RAM_TENGO.png`](../imagenes/CUANTA_RAM_TENGO.png) y [`imagenes/CUANTA_MEMORIA_RAM_USAN_PROCESOS.png`](../imagenes/CUANTA_MEMORIA_RAM_USAN_PROCESOS.png)): 16 GB instalados, 5,08 GB libres al momento de la captura (uso 68 %). Las 3 VM suman 6 GB. Con el Paso 0, WSL ya queda apagado. Cerrar Chrome, VS Code, Edge y Teams libera unos 2,9 GB; cerrar WSL y VS Code corta la sesión de trabajo con Claude Code, así que conviene hacerlo solo para las mediciones. Si aún falta, bajar los workers a 1,5 GB. **(agregado)**
 - **CPU del anfitrión:** Intel Core 7 240H, 10 núcleos / 16 hilos; alcanza para 2 vCPU por VM. **(agregado)**
 - **WSL2 y VirtualBox:** con el hipervisor de Windows activo (WSL2, Hyper-V, VBS), VirtualBox no puede usar VT-x y corre sobre Hyper-V (ícono de tortuga verde en la VM; en `VBox.log`: `Attempting fall back to NEM: VT-x is not available`). Es muy lento: la instalación de Ubuntu no avanzaba. `wsl --shutdown` **no alcanza**, porque el hipervisor se carga al arrancar Windows. Hay que desactivarlo y reiniciar; ver el [Paso 0](#paso-0-desactivar-hyper-v-si-se-usa-wsl2-y-reactivarlo-al-terminar), que también explica cómo reactivar WSL2 al terminar. **(agregado)**
 - **Capturas:** tomar una por cada paso de configuración mientras se avanza.
@@ -193,7 +193,7 @@ Si se usaba huella o cara para entrar a Windows, puede pedir registrarlas de nue
 
 **Resultado esperado:** la VM arranca y permite iniciar sesión como `hadoop@master`.
 
-**Resultado (2026-10-17):** login correcto como `hadoop@master` (captura `PARCIAL/imagenes/1_login!!!!!.png`). `/` de 24,44 GB, uso de memoria 9 %, `enp0s3` con `10.0.2.15`. `enp0s8` no aparece en el resumen de login; se configura en el 2.2. **(agregado)**
+**Resultado (2026-10-17):** login correcto como `hadoop@master` (captura [`PARCIAL/imagenes/1_login!!!!!.png`](imagenes/1_login!!!!!.png)). `/` de 24,44 GB, uso de memoria 9 %, `enp0s3` con `10.0.2.15`. `enp0s8` no aparece en el resumen de login; se configura en el 2.2. **(agregado)**
 
 ## Paso 2: configurar el sistema (en master)
 
@@ -221,7 +221,7 @@ java -version                                       # debe mostrar 11.x
 
 **Resultado esperado:** `ssh` aparece como `active (running)` y `java -version` muestra 11.x. Si `apt-cache policy` da `Candidate: (none)`, detenerse y decidir si se cambia a Ubuntu 24.04.
 
-**Resultado (2026-10-17):** `Candidate: 11.0.32.1+1-1ubuntu1~26.04` (captura `PARCIAL/imagenes/2_jdk.png`); Java 11 disponible. **(agregado)**
+**Resultado (2026-10-17):** `Candidate: 11.0.32.1+1-1ubuntu1~26.04` (captura [`PARCIAL/imagenes/2_jdk.png`](imagenes/2_jdk.png)); Java 11 disponible. **(agregado)**
 
 ### 2.2 IP estática en la red solo anfitrión
 
@@ -266,7 +266,7 @@ ip a show enp0s8     # debe decir inet 192.168.56.10/24
 
 **Resultado esperado:** `netplan apply` no muestra errores.
 
-**Resultado (2026-10-17):** `enp0s8` con `inet 192.168.56.10/24`, `valid_lft forever` (fija) y sin la `.103` del DHCP (captura `imagenes/2_2_IP_estatica_corroborando.png`). **(agregado)**
+**Resultado (2026-10-17):** `enp0s8` con `inet 192.168.56.10/24`, `valid_lft forever` (fija) y sin la `.103` del DHCP (captura [`imagenes/2_2_IP_estatica_corroborando.png`](../imagenes/2_2_IP_estatica_corroborando.png)). **(agregado)**
 
 ### 2.3 Nombres de los nodos
 
@@ -305,7 +305,7 @@ ip a          # enp0s8 debe seguir en 192.168.56.10
 
 **Resultado esperado:** `enp0s8` muestra `192.168.56.10`.
 
-**Resultado (2026-10-17):** tras reiniciar, `enp0s8` sigue en `192.168.56.10/24` (`forever`) y `enp0s3` en `10.0.2.15` (capturas `PARCIAL/imagenes/2_4_reboot.png` y `2_4_reboot_resultado.png`). **(agregado)**
+**Resultado (2026-10-17):** tras reiniciar, `enp0s8` sigue en `192.168.56.10/24` (`forever`) y `enp0s3` en `10.0.2.15` (capturas [`PARCIAL/imagenes/2_4_reboot.png`](imagenes/2_4_reboot.png) y [`2_4_reboot_resultado.png`](imagenes/2_4_reboot_resultado.png)). **(agregado)**
 
 ## Paso 3: clonar los workers
 
@@ -349,7 +349,7 @@ ip a          # enp0s8 debe seguir en 192.168.56.10
 
 **Resultado esperado:** `ping -c 3 worker1` y `ping -c 3 worker2` responden desde master.
 
-**Resultado (2026-10-17):** 0 % de pérdida de master a worker1 y worker2, y de cada worker a master (captura `PARCIAL/imagenes/3_verificando_conexion_ip_master_worker1_worker2.png`).
+**Resultado (2026-10-17):** 0 % de pérdida de master a worker1 y worker2, y de cada worker a master (captura [`PARCIAL/imagenes/3_verificando_conexion_ip_master_worker1_worker2.png`](imagenes/3_verificando_conexion_ip_master_worker1_worker2.png)).
 
 ## Paso 4: SSH sin contraseña (en master)
 
@@ -389,7 +389,7 @@ Con las 3 VM encendidas.
 
 **Resultado esperado:** el último comando imprime `worker1` y `hadoop` sin pedir contraseña.
 
-**Resultado (2026-10-17):** `Number of key(s) added: 1` en los 3 nodos y `ssh worker1|worker2|master 'hostname && whoami'` → nombre del nodo y `hadoop`, sin contraseña (captura `PARCIAL/imagenes/4_configurar_ssh_copy_id.png`). `Permission denied, please try again` = contraseña mal escrita; se vuelve a escribir.
+**Resultado (2026-10-17):** `Number of key(s) added: 1` en los 3 nodos y `ssh worker1|worker2|master 'hostname && whoami'` → nombre del nodo y `hadoop`, sin contraseña (captura [`PARCIAL/imagenes/4_configurar_ssh_copy_id.png`](imagenes/4_configurar_ssh_copy_id.png)). `Permission denied, please try again` = contraseña mal escrita; se vuelve a escribir.
 
 ## Paso 5: descargar Hadoop 3.3.6 (en master)
 
@@ -626,7 +626,7 @@ hdfs dfsadmin -report     # debe decir Live datanodes (2)
 - `hdfs dfsadmin -report`: `Live datanodes (2)`. **(agregado)**
 - En Chrome o Edge de Windows (con las VM encendidas; Windows llega a la red `192.168.56.x`), escribir en la barra de direcciones `http://192.168.56.10:9870` → pestaña **Datanodes**: worker1 y worker2 en `In service`; y `http://192.168.56.10:8088` → menú izquierdo **Nodes**: 2 nodos `RUNNING`. Son las capturas de "nodos conectados" que pide el informe. 📷 **(agregado: los puertos salen de la guía alternativa, sección 14)**
 
-**Resultado (2026-10-18):** `hdfs dfsadmin -report` → `Live datanodes (2)`: worker1 (192.168.56.11) y worker2 (192.168.56.12), `Decommission Status : Normal`, ~14 GB libres de DFS cada uno. Navegador: `:9870` Datanodes con los 2 nodos en operación (versión 3.3.6) y `:8088` Nodes con `Active Nodes 2`, ambos `RUNNING` (capturas `PARCIAL/imagenes/8_*.png`). El `SHUTDOWN_MSG` al final de `hdfs namenode -format` es normal.
+**Resultado (2026-10-18):** `hdfs dfsadmin -report` → `Live datanodes (2)`: worker1 (192.168.56.11) y worker2 (192.168.56.12), `Decommission Status : Normal`, ~14 GB libres de DFS cada uno. Navegador: `:9870` Datanodes con los 2 nodos en operación (versión 3.3.6) y `:8088` Nodes con `Active Nodes 2`, ambos `RUNNING` (capturas [`8_iniciar_hadoop.png`](imagenes/8_iniciar_hadoop.png), [`8_dfsadmin_report.png`](imagenes/8_dfsadmin_report.png), [`8_dfsadmin_report_verificando_en_navegador.png`](imagenes/8_dfsadmin_report_verificando_en_navegador.png) y [`8_dfsadmin_report_verificando_en_navegador_hadoop.png`](imagenes/8_dfsadmin_report_verificando_en_navegador_hadoop.png)). El `SHUTDOWN_MSG` al final de `hdfs namenode -format` es normal.
 
 ## Paso 9: prueba con WordCount (en master)
 
@@ -643,7 +643,7 @@ hdfs dfs -cat /output/part-r-00000       # muestra el conteo de palabras
 
 **Resultado esperado:** el job termina y `part-r-00000` muestra cada palabra con el conteo 10000, salvo `de` con 30000 (aparece 3 veces en la frase).
 
-**Resultado (2026-10-18):** con la frase `...curso de ANALISI DE MACRODATOS ` el job leyó 690000 bytes y `part-r-00000` dio `de` 20000 y las demás palabras (incluidas `DE`, `ANALISI`, `MACRODATOS`) 10000 cada una; WordCount distingue mayúsculas (captura `PARCIAL/imagenes/9_MAPREDUCE.png`).
+**Resultado (2026-10-18):** con la frase `...curso de ANALISI DE MACRODATOS ` el job leyó 690000 bytes y `part-r-00000` dio `de` 20000 y las demás palabras (incluidas `DE`, `ANALISI`, `MACRODATOS`) 10000 cada una; WordCount distingue mayúsculas (captura [`PARCIAL/imagenes/9_MAPREDUCE.png`](imagenes/9_MAPREDUCE.png)).
 
 ## Desarrollo del Parcial
 
@@ -675,7 +675,7 @@ Select-String -Path dataSSE_17122021_c_utf8.csv -Pattern 'Ñ' -Encoding UTF8 | S
 Get-FileHash dataSSE_17122021_c_utf8.csv                                   # SHA-256 empieza con 1EA9794452821CC7
 ```
 Equivalente en Git Bash: `iconv -f ISO-8859-1 -t UTF-8 dataSSE_17122021_c.csv | tr -d '\r' > dataSSE_17122021_c_utf8.csv` (mismo resultado).
-Comprobado el 2026-10-18 (captura `PARCIAL/imagenes/Seccion_2_1_paso_a_preparacion.png`): repetir el comando da un archivo idéntico (mismo SHA-256); 3 833 líneas (cabecera + 3 832 accidentes). La cabecera la salta el mapper (`key.get() == 0`, como en la PC1).
+Comprobado el 2026-10-18 (captura [`PARCIAL/imagenes/Seccion_2_1_paso_a_preparacion.png`](imagenes/Seccion_2_1_paso_a_preparacion.png)): repetir el comando da un archivo idéntico (mismo SHA-256); 3 833 líneas (cabecera + 3 832 accidentes). La cabecera la salta el mapper (`key.get() == 0`, como en la PC1).
 - Filas sin `PROGRESIVA` (80) o `CODIGO_VIA` (31): se descartan solo en las consultas que usan ese campo.
 
 #### 2.1.2 Crear el proyecto NetBeans `PARCIAL` (una sola vez)
@@ -710,7 +710,7 @@ Pregunta: ¿qué vía tiene el mayor índice de severidad en cada departamento, 
    ```powershell
    jar tf C:\Users\esauf\Documents\NetBeansProjects\PARCIAL\dist\PARCIAL.jar | Select-String SeveridadPorVia   # deben salir las 7 clases (+ ReducerRanking$1) 📷
    ```
-   Hecho el 2026-10-18: las 8 `.class` dentro de `PARCIAL.jar` (captura `PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_3_obtener_PARCIAL_JAR.png`).
+   Hecho el 2026-10-18: las 8 `.class` dentro de `PARCIAL.jar` (captura [`PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_3_obtener_PARCIAL_JAR.png`](imagenes/Desarrollo_parcial_2_1_2_1_3_obtener_PARCIAL_JAR.png)).
 4. Copiar a master (PowerShell de Windows; pide la contraseña de hadoop):
    ```powershell
    scp C:\Users\esauf\Desktop\uni\macro-datos\PARCIAL\dataset_accidentes_cgm\dataSSE_17122021_c_utf8.csv hadoop@192.168.56.10:~/   # CSV, solo la primera vez
@@ -738,11 +738,11 @@ Pregunta: ¿qué vía tiene el mayor índice de severidad en cada departamento, 
    - b) Envío: `java -cp` corre el `Driver` en master como cliente. `JobClient.runJob` sube `PARCIAL.jar` a HDFS y entrega el job 1 al ResourceManager de master; espera a que termine y recién entonces envía el job 2, y luego el 3.
    - c) Ejecución: el ResourceManager pide contenedores a los NodeManagers de worker1 y worker2 (master no ejecuta tareas: no está en `workers`). En un contenedor arranca el ApplicationMaster del job, que lanza los map y el reduce en contenedores de los workers.
    - d) Map y reduce: la API clásica (`mapred`) pide 2 maps por defecto, así que cada job divide su entrada en 2 partes (`number of splits:2`) y lanza 2 map en paralelo, cada uno leyendo su parte desde un DataNode local (`Data-local map tasks=2`). Luego hay 1 reduce (valor por defecto), que junta las salidas de los 2 map (`Shuffled Maps =2`) y escribe en HDFS (`_temp1`, `_temp2` y la salida final), que es la entrada del job siguiente.
-   - e) Lo que se observó el 2026-10-18 (capturas `..._inciso_5_..._MASTER_TIME.png` y `_TIME_2.png`, y API de YARN `http://192.168.56.10:8088/ws/v1/cluster/apps`):
+   - e) Lo que se observó el 2026-10-18 (capturas [`..._inciso_5_..._MASTER_TIME.png`](imagenes/Desarrollo_parcial_2_1_2_1_3_inciso_5_ejecutar_en_el_cluster_MASTER_TIME.png) y [`_TIME_2.png`](imagenes/Desarrollo_parcial_2_1_2_1_3_inciso_5_ejecutar_en_el_cluster_MASTER_TIME_2.png), y API de YARN `http://192.168.56.10:8088/ws/v1/cluster/apps`):
      - Los 3 jobs terminaron `SUCCEEDED`, cada uno con `Launched map tasks=2` y `Launched reduce tasks=1`.
      - ApplicationMaster: worker2 (job 1, 94.1 s), worker1 (job 2, 80.9 s), worker2 (job 3, 75.8 s); YARN reparte entre los dos workers.
      - Tiempo total (`time`): `real 4m28.022s` (268 s). De eso, el cálculo real es poco (job 3: `CPU time spent 9780 ms`); casi todo es arrancar contenedores y escribir/leer HDFS entre jobs, porque el CSV es pequeño.
-   Resultado (2026-10-18): ranking de 24 departamentos, igual al esperado del paso 7 (captura `PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_3_inciso_5_ejecutar_en_el_cluster_MASTER_RANKING.png`); `java -cp` funciona en el clúster.
+   Resultado (2026-10-18): ranking de 24 departamentos, igual al esperado del paso 7 (captura [`PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_3_inciso_5_ejecutar_en_el_cluster_MASTER_RANKING.png`](imagenes/Desarrollo_parcial_2_1_2_1_3_inciso_5_ejecutar_en_el_cluster_MASTER_RANKING.png)); `java -cp` funciona en el clúster.
    Se usa `java -cp` y no `hadoop jar`: NetBeans graba `Main-Class: parcial.PARCIAL` en el manifiesto (comprobado en `PC1.jar`: `pc1.PC1`) y `hadoop jar` ejecuta esa clase en vez del `Driver`; es el "bug" de `GUIA_EJECUCION.md` y pasa también en Linux.
 6. Ejecutar en el nodo único (PowerShell **como administrador**, como en `GUIA_EJECUCION.md`):
    ```powershell
@@ -765,7 +765,7 @@ Pregunta: ¿qué vía tiene el mayor índice de severidad en cada departamento, 
    .\parcial.ps1 status                                                      # = ..\hadoop.ps1 status: puertos 9870, 8088, 8042 y 19000 en OK
    .\parcial.ps1 run SeveridadPorVia                                         # "Tiempo total: ... s" + ranking; también lo guarda en PARCIAL\resultados\SeveridadPorVia_nodo_unico.txt 📷
    ```
-   Resultado (2026-10-18, captura `PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_3_inciso_6_EN_WINDOWS_1_NODO_3_TIEMPOS.png`):
+   Resultado (2026-10-18, captura [`PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_3_inciso_6_EN_WINDOWS_1_NODO_3_TIEMPOS.png`](imagenes/Desarrollo_parcial_2_1_2_1_3_inciso_6_EN_WINDOWS_1_NODO_3_TIEMPOS.png)):
    - a) Mismo ranking que el clúster: 24 líneas, puesto 1 `PUNO PE-34H 6.7895`, último `PASCO PE-3N 1.0323` (leído por WebHDFS del HDFS local).
    - b) Tiempo: `TotalSeconds 76.80` (1 min 16.8 s). Por job (YARN local): 20.9 s, 24.3 s y 22.5 s, todos `SUCCEEDED`.
    - c) Primer intento fallido: la PowerShell no era de administrador; el NodeManager quedó `UNHEALTHY` (`nm-local-dir ... not writable`) y el job 1 se quedó 16 min en `ACCEPTED`. Se mató con `yarn application -kill`, se reinició Hadoop como administrador y funcionó.
@@ -816,7 +816,7 @@ Consulta 2: `PuntosNegrosPorTramo`. Pregunta: ¿qué tramos de 10 km de carreter
    ```powershell
    jar tf C:\Users\esauf\Documents\NetBeansProjects\PARCIAL\dist\PARCIAL.jar | Select-String PuntosNegrosPorTramo   # 7 clases + ReducerPuntosNegros$1 📷
    ```
-   Hecho el 2026-10-18: las 8 `.class` dentro de `PARCIAL.jar`, junto al paquete `SeveridadPorVia` (captura `PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_4_3_Segunda_Consulta_con_decimales.png`).
+   Hecho el 2026-10-18: las 8 `.class` dentro de `PARCIAL.jar`, junto al paquete `SeveridadPorVia` (captura [`PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_4_3_Segunda_Consulta_con_decimales.png`](imagenes/Desarrollo_parcial_2_1_2_1_4_3_Segunda_Consulta_con_decimales.png)).
 4. Copiar a master (PowerShell de Windows; el CSV ya está en master y en HDFS desde 2.1.3):
    ```powershell
    scp C:\Users\esauf\Documents\NetBeansProjects\PARCIAL\dist\PARCIAL.jar hadoop@192.168.56.10:~/   # JAR nuevo (trae las 2 consultas)
@@ -837,7 +837,7 @@ Consulta 2: `PuntosNegrosPorTramo`. Pregunta: ¿qué tramos de 10 km de carreter
    ./parcial.sh status                      # jps en los 3 nodos y "Live datanodes (2)"
    ./parcial.sh run PuntosNegrosPorTramo    # "Tiempo total: ... s" + ranking; también lo guarda en ~/resultados/PuntosNegrosPorTramo_cluster.txt 📷
    ```
-   Resultado con la receta (2026-10-18, 2.ª corrida en el clúster; captura `PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_MASTER_1_CON_BASH.png`):
+   Resultado con la receta (2026-10-18, 2.ª corrida en el clúster; captura [`PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_MASTER_1_CON_BASH.png`](imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_MASTER_1_CON_BASH.png)):
    - a) `./parcial.sh status`: master con NameNode, SecondaryNameNode y ResourceManager; worker1 y worker2 con DataNode y NodeManager; `Live datanodes (2)`.
    - b) `./parcial.sh run PuntosNegrosPorTramo`: los 3 jobs `SUCCEEDED` (API de YARN), ApplicationMaster en worker1, worker2 y worker1, con 46.2 s, 48.6 s y 43.4 s (suma 138.2 s; 1.ª corrida: 134.1 s). Salida de 45 líneas idéntica a la 1.ª corrida (WebHDFS). Primera prueba real de `parcial.sh`: funcionó.
    - c) Su "Tiempo total" no quedó registrado (corrida anterior al guardado en `.txt`); para la comparación se usa la 1.ª corrida (`real` 147.6 s).
@@ -847,7 +847,7 @@ Consulta 2: `PuntosNegrosPorTramo`. Pregunta: ¿qué tramos de 10 km de carreter
    - c) Ejecución: el ResourceManager pide contenedores a los NodeManagers de worker1 y worker2 (master no ejecuta tareas: no está en `workers`); en uno arranca el ApplicationMaster del job, que lanza los map y el reduce en contenedores de los workers.
    - d) Map y reduce: la API `mapred` pide 2 maps por defecto, así que cada job lanza 2 map en paralelo, cada uno sobre su parte del archivo leída desde un DataNode local; luego 1 reduce junta las salidas y escribe en HDFS (`_temp1`, `_temp2` y la salida final), que es la entrada del job siguiente.
 
-   Resultado (2026-10-18, capturas `PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_MASTER_1.png`, `_2.png` y `_3_RANKING.png`):
+   Resultado (2026-10-18, capturas [`PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_MASTER_1.png`](imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_MASTER_1.png), [`_2.png`](imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_MASTER_2.png) y [`_3_RANKING.png`](imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_MASTER_3_RANKING.png)):
    - a) 45 puntos negros, iguales al esperado del paso 7 (job 3: `Reduce output records=45`). La salida completa del clúster (leída por WebHDFS) es idéntica línea por línea a la de la prueba en modo local; la interpretación de abajo se hizo sobre esas 45 líneas, no solo sobre la captura.
    - b) Los 3 jobs `SUCCEEDED` (API de YARN): ApplicationMaster en worker2 (job 1, 41.4 s), worker1 (job 2, 45.1 s) y worker2 (job 3, 47.6 s).
    - c) Tiempo total: `real 2m27.631s` (147.6 s). Cada job tardó la mitad que en la Consulta 1 (80-94 s) con el mismo tamaño de datos: el tiempo del clúster varía entre corridas (contenedores ya en caché, otros procesos en el PC), así que para la tabla final conviene repetir cada consulta 2-3 veces y usar el promedio.
@@ -872,10 +872,10 @@ Consulta 2: `PuntosNegrosPorTramo`. Pregunta: ¿qué tramos de 10 km de carreter
    .\parcial.ps1 status                                                      # = ..\hadoop.ps1 status: puertos 9870, 8088, 8042 y 19000 en OK
    .\parcial.ps1 run PuntosNegrosPorTramo                                    # "Tiempo total: ... s" + ranking; también lo guarda en PARCIAL\resultados\PuntosNegrosPorTramo_nodo_unico.txt 📷
    ```
-   Resultado (2026-10-18, con `.\parcial.ps1 run PuntosNegrosPorTramo`; capturas `PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_NODO_WINDOWS_ejecucion.png` y `_resultados.png`):
+   Resultado (2026-10-18, con `.\parcial.ps1 run PuntosNegrosPorTramo`; capturas [`PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_NODO_WINDOWS_ejecucion.png`](imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_NODO_WINDOWS_ejecucion.png) y [`_resultados.png`](imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_NODO_WINDOWS_resultados.png)):
    - a) 45 puntos negros, idénticos línea por línea a la salida del clúster (comparadas por WebHDFS). Primera prueba real de la receta `run`: funcionó.
    - b) Los 3 jobs `SUCCEEDED` (YARN local): 20.2 s, 22.6 s y 23.2 s (suma 66.0 s). El "Tiempo total" de esa corrida no se ve en las capturas.
-   - c) 2.ª corrida (2026-10-18 14:05, con la receta que guarda el `.txt`): **Tiempo total 70.37 s**; jobs 18.6 s, 22.2 s y 21.7 s, todos `SUCCEEDED`; 45 líneas idénticas al clúster. Archivo `PARCIAL/resultados/PuntosNegrosPorTramo_nodo_unico.txt`; captura `PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_WINDOWS_TIEMPO_TOTAL.png`.
+   - c) 2.ª corrida (2026-10-18 14:05, con la receta que guarda el `.txt`): **Tiempo total 70.37 s**; jobs 18.6 s, 22.2 s y 21.7 s, todos `SUCCEEDED`; 45 líneas idénticas al clúster. Archivo `PARCIAL/resultados/PuntosNegrosPorTramo_nodo_unico.txt`; captura [`PARCIAL/imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_WINDOWS_TIEMPO_TOTAL.png`](imagenes/Desarrollo_parcial_2_1_2_1_4_5_Segunda_Consulta_con_decimales_en_WINDOWS_TIEMPO_TOTAL.png).
 
 7. Interpretación para el informe y comparación (después de ejecutar los pasos 5 y 6):
 
@@ -982,7 +982,7 @@ Algoritmo: DBSCAN (agrupamiento por densidad; el enunciado excluye K-means). Un 
    - b) Envío: `java -cp` corre el `Driver` en master como cliente; `JobClient.runJob` entrega cada job al ResourceManager de master y espera a que termine antes de enviar el siguiente. En las vueltas de propagación, además, el `Driver` lee el contador `CAMBIOS` del job terminado para decidir si lanza otra vuelta.
    - c) Ejecución: el ResourceManager pide contenedores a los NodeManagers de worker1 y worker2 (master no ejecuta tareas: no está en `workers`); en uno arranca el ApplicationMaster de cada job, que lanza los map y el reduce en contenedores de los workers.
    - d) Map y reduce: cada job lanza 2 map en paralelo (la API `mapred` pide 2 por defecto) sobre su entrada en HDFS y luego 1 reduce, que escribe en HDFS la entrada del job siguiente. El job de etiquetado no tiene reduce: cada map escribe directo su salida.
-   Resultado (2026-10-18, con `./parcial.sh run AgrupamientoDBSCAN`; capturas `PARCIAL/imagenes/Desarrollo_parcial_2_2_consulta_de_agrupamiento_3_build_4_copiar_a_master.png`, `..._5_comando_ejecucion.png`, `..._5_comando_resultados_a.png` y `_b.png`):
+   Resultado (2026-10-18, con `./parcial.sh run AgrupamientoDBSCAN`; capturas [`PARCIAL/imagenes/Desarrollo_parcial_2_2_consulta_de_agrupamiento_3_build_4_copiar_a_master.png`](imagenes/Desarrollo_parcial_2_2_consulta_de_agrupamiento_3_build_4_copiar_a_master.png), [`..._5_comando_ejecucion.png`](imagenes/Desarrollo_parcial_2_2_consulta_de_agrupamiento_3_build_4_copiar_a_master_5_comando_ejecucion.png), [`..._5_comando_resultados_a.png`](imagenes/Desarrollo_parcial_2_2_consulta_de_agrupamiento_3_build_4_copiar_a_master_5_comando_resultados_a.png) y [`_b.png`](imagenes/Desarrollo_parcial_2_2_consulta_de_agrupamiento_3_build_4_copiar_a_master_5_comando_resultados_b.png)):
    - a) Build: las 16 `.class` (14 clases + `ReducerPropagacion$Contador` + `ReducerRanking$1`) dentro de `PARCIAL.jar`; `scp` del JAR y de `parcial.sh` al 100 %.
    - b) Los 19 jobs `SUCCEEDED` (API de YARN): 1 vecindad, 14 vueltas de propagación, etiquetado, resumen, ranking y métricas. ApplicationMaster repartido entre worker2 (10 jobs) y worker1 (9).
    - c) Tiempo total: **852.61 s** (14 min 13 s). Suma de los 19 jobs en YARN: 793.0 s; cada job entre 33.3 s y 47.2 s.
@@ -1008,7 +1008,7 @@ Algoritmo: DBSCAN (agrupamiento por densidad; el enunciado excluye K-means). Un 
    .\parcial.ps1 status                                                      # = ..\hadoop.ps1 status: puertos 9870, 8088, 8042 y 19000 en OK
    .\parcial.ps1 run AgrupamientoDBSCAN                                      # "Tiempo total: ... s" + ranking + métricas; también lo guarda en PARCIAL\resultados\AgrupamientoDBSCAN_nodo_unico.txt 📷
    ```
-   Resultado (2026-10-18, con `.\parcial.ps1 run AgrupamientoDBSCAN`; captura `PARCIAL/imagenes/Desarrollo_parcial_2_2_consulta_de_agrupamiento_6_EN_WINDOWS_EJECUCION_RESULTADO.png`; archivo `PARCIAL/resultados/AgrupamientoDBSCAN_nodo_unico.txt`):
+   Resultado (2026-10-18, con `.\parcial.ps1 run AgrupamientoDBSCAN`; captura [`PARCIAL/imagenes/Desarrollo_parcial_2_2_consulta_de_agrupamiento_6_EN_WINDOWS_EJECUCION_RESULTADO.png`](imagenes/Desarrollo_parcial_2_2_consulta_de_agrupamiento_6_EN_WINDOWS_EJECUCION_RESULTADO.png); archivo `PARCIAL/resultados/AgrupamientoDBSCAN_nodo_unico.txt`):
    - a) Los 19 jobs `SUCCEEDED` (YARN local), con las mismas 14 vueltas de propagación.
    - b) Tiempo total: **487.89 s** (8 min 8 s). Suma de los 19 jobs en YARN: 445.4 s; cada job entre 19.4 s y 27.2 s.
    - c) Ranking (31 líneas) y métricas idénticos a los del clúster.
@@ -1050,7 +1050,7 @@ Algoritmo: DBSCAN (agrupamiento por densidad; el enunciado excluye K-means). Un 
    Análisis de la comparación:
    - a) Métricas: idénticas en los dos (y el ranking de 31 líneas también). DBSCAN es determinista (mismos datos, `eps` y `minPts`): repartir el trabajo entre workers no cambia el resultado, solo el tiempo.
    - b) Tiempo: el clúster fue 1.7 veces más lento (speedup 0.58 con el promedio de 2 corridas; las corridas variaron solo 4 %: 852.61 y 816.33 s). Es la consulta con más jobs (19 frente a 3 de las Consultas 1 y 2), así que el costo fijo por job (contenedores, ApplicationMaster, escribir y leer HDFS entre jobs) se paga 19 veces: 33-47 s por job en el clúster frente a 19-27 s en Windows.
-   - c) El cálculo más pesado es el job de métricas (cada uno de los 699 puntos agrupados contra todos los demás) y el de vecindad; aun así, el job de métricas usó solo 5.9 s de CPU en el clúster (`CPU time spent (ms)=5910`, captura `_resultados_a.png`, el job con `Reduce output records=5`), frente a los 33-47 s que tarda cada job: casi todo es coordinación.
+   - c) El cálculo más pesado es el job de métricas (cada uno de los 699 puntos agrupados contra todos los demás) y el de vecindad; aun así, el job de métricas usó solo 5.9 s de CPU en el clúster (`CPU time spent (ms)=5910`, captura [`_resultados_a.png`](imagenes/Desarrollo_parcial_2_2_consulta_de_agrupamiento_3_build_4_copiar_a_master_5_comando_resultados_a.png), el job con `Reduce output records=5`), frente a los 33-47 s que tarda cada job: casi todo es coordinación.
    - d) Speedup de las 3 consultas: 0.29 (Consulta 1), 0.48 (Consulta 2) y 0.58 (Consulta 3). En ninguna gana el clúster: con un CSV de 434 KB el costo de coordinar supera la ganancia de repartir el cálculo.
 
 ### 2.3 2 modelos de multilayer perceptrón, 1 de clasificación y 1 de regresión, usando el concepto clásico de gradiente descendiente en Hadoop Mapreduce
@@ -1117,11 +1117,11 @@ Pregunta: ¿el accidente tendrá fallecidos? Etiqueta 1 si `CANT_FALLECIDOS > 0`
    - b) Envío: `java -cp` corre el `Driver` en master como cliente; cada job se entrega al ResourceManager de master y el `Driver` espera a que termine. Entre épocas, el `Driver` lee de HDFS la suma de gradientes, actualiza los pesos en memoria y los manda en la configuración del job siguiente.
    - c) Ejecución: las tareas corren en contenedores de worker1 y worker2 (master no está en `workers`).
    - d) Paralelismo de cada época: 2 map en paralelo (la API `mapred` pide 2 por defecto), cada uno calcula el gradiente de su mitad de los ejemplos; el reduce los suma. Es el gradiente de todos los ejemplos, calculado en partes.
-   - Monitor de recursos (htop) durante la ejecución (2026-10-18 20:50, época 11, master con "Epoca 11: perdida de entrenamiento 1.083382 (3062 ejemplos)"): `PARCIAL/imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_master_workers_cpu.png`. En worker2 aparece un 2.º proceso `java` recién arrancado (PID 15688, 0:00.18 de CPU): el contenedor del job nuevo. Memoria usada: worker1 587 MB y worker2 617 MB de 1.60 GB. La CPU está en 1-3 % porque la captura cayó entre tareas: cada map calcula solo 1-2 s (`CPU time spent (ms)=1090`) y el resto de los ~35 s por época es arrancar y cerrar contenedores. Para ver el pico, capturar `htop` 2-3 s después de que master muestre `map 0% reduce 0%`; el promedio sale de `vmstat`.
-   - Resultado (2026-10-18 21:03, con `./parcial.sh run PerceptronClasificacion`; captura `PARCIAL/imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_master_workers_cpu_RESULTADO.png`; archivo `~/resultados/PerceptronClasificacion_cluster.txt` en master):
+   - Monitor de recursos (htop) durante la ejecución (2026-10-18 20:50, época 11, master con "Epoca 11: perdida de entrenamiento 1.083382 (3062 ejemplos)"): [`PARCIAL/imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_master_workers_cpu.png`](imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_master_workers_cpu.png). En worker2 aparece un 2.º proceso `java` recién arrancado (PID 15688, 0:00.18 de CPU): el contenedor del job nuevo. Memoria usada: worker1 587 MB y worker2 617 MB de 1.60 GB. La CPU está en 1-3 % porque la captura cayó entre tareas: cada map calcula solo 1-2 s (`CPU time spent (ms)=1090`) y el resto de los ~35 s por época es arrancar y cerrar contenedores. Para ver el pico, capturar `htop` 2-3 s después de que master muestre `map 0% reduce 0%`; el promedio sale de `vmstat`.
+   - Resultado (2026-10-18 21:03, con `./parcial.sh run PerceptronClasificacion`; captura [`PARCIAL/imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_master_workers_cpu_RESULTADO.png`](imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_master_workers_cpu_RESULTADO.png); archivo `~/resultados/PerceptronClasificacion_cluster.txt` en master):
      - a) Tiempo total: **1055.25 s** (17 min 35 s) para los 53 jobs. Al terminar, en `htop` los workers vuelven a reposo (CPU 0-1 %, memoria 592 y 623 MB de 1.60 GB).
      - b) Métricas en test (770 accidentes): `perdida_test 0.6417`, `accuracy 0.5948`, `precision 0.2362`, `recall 0.6183`, `f1 0.3418`, `accuracy_base_siempre_no 0.8299`, matriz `VP=81 FP=262 VN=377 FN=50`.
-     - c) Curva de pérdida de entrenamiento (`hdfs dfs -cat /parcial_output/PerceptronClasificacion_curva/part-00000`; capturas `PARCIAL/imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_master_workers_cpu_part-00000.png` y `_part-00000_2.png`): baja en todas las épocas, de **1.207365** (época 1) a **1.058217** (época 50), −12 %. Baja rápido al inicio (1.207 → 1.085 en 10 épocas) y muy lento al final (≈ −0.0004 por época entre la 40 y la 50): todavía no se estabilizó del todo; más épocas o una tasa mayor podrían mejorar algo, a costa de ~20 s de clúster por época extra. La pérdida es la entropía cruzada con peso 4.8, por eso es mayor que la `perdida_test` sin peso (0.6417). Al final del archivo, la línea `pesos_finales` trae los 161 pesos entrenados.
+     - c) Curva de pérdida de entrenamiento (`hdfs dfs -cat /parcial_output/PerceptronClasificacion_curva/part-00000`; capturas [`PARCIAL/imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_master_workers_cpu_part-00000.png`](imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_master_workers_cpu_part-00000.png) y [`_part-00000_2.png`](imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_master_workers_cpu_part-00000_2.png)): baja en todas las épocas, de **1.207365** (época 1) a **1.058217** (época 50), −12 %. Baja rápido al inicio (1.207 → 1.085 en 10 épocas) y muy lento al final (≈ −0.0004 por época entre la 40 y la 50): todavía no se estabilizó del todo; más épocas o una tasa mayor podrían mejorar algo, a costa de ~20 s de clúster por época extra. La pérdida es la entropía cruzada con peso 4.8, por eso es mayor que la `perdida_test` sin peso (0.6417). Al final del archivo, la línea `pesos_finales` trae los 161 pesos entrenados.
 5. Ejecutar en el nodo único (PowerShell como administrador):
    ```powershell
    cd C:\Users\esauf\Desktop\uni\macro-datos\PARCIAL                         # carpeta de parcial.ps1
@@ -1130,7 +1130,7 @@ Pregunta: ¿el accidente tendrá fallecidos? Etiqueta 1 si `CANT_FALLECIDOS > 0`
    .\parcial.ps1 run PerceptronClasificacion                                 # "Tiempo total" + métricas; lo guarda en PARCIAL\resultados\PerceptronClasificacion_nodo_unico.txt 📷
    hadoop fs -cat /parcial_output/PerceptronClasificacion_curva/part-00000   # curva de pérdida por época 📷
    ```
-   - Resultado: capturas `PARCIAL/imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_unico_Nodo_windows_RESULTADOS_FINALES.png` y `PARCIAL/imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_unico_Nodo_windows_TIEMPOS.png`.
+   - Resultado: capturas [`PARCIAL/imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_unico_Nodo_windows_RESULTADOS_FINALES.png`](imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_unico_Nodo_windows_RESULTADOS_FINALES.png) y [`PARCIAL/imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_unico_Nodo_windows_TIEMPOS.png`](imagenes/Desarrollo_2_3_1_PERCEPTRON_CLASIFICACION_unico_Nodo_windows_TIEMPOS.png).
 6. Interpretación para el informe y comparación (después de ejecutar los pasos 4 y 5):
    - Qué mirar en el resultado: la curva debe bajar; `accuracy` hay que compararla con `accuracy_base_siempre_no` (≈ 0.83: decir siempre "no" ya acierta el 83 %); con clases desbalanceadas importan más `recall` (cuántos accidentes con fallecidos detecta) y `f1`.
    - Interpretación (sobre el resultado del clúster):
@@ -1185,7 +1185,7 @@ Pregunta: ¿cuántos heridos tendrá el accidente? Se predice `log(1 + CANT_HERI
    - b) Envío: `java -cp` corre el `Driver` en master como cliente; entre épocas lee de HDFS la suma de gradientes, actualiza los pesos y los manda en la configuración del job siguiente.
    - c) Ejecución: las tareas corren en contenedores de worker1 y worker2 (master no está en `workers`).
    - d) Paralelismo de cada época: 2 map en paralelo calculan el gradiente de su mitad de los ejemplos; el reduce los suma.
-   - Resultado (clúster, `./parcial.sh run PerceptronRegresion`; archivo `~/resultados/PerceptronRegresion_cluster.txt` en master): capturas `PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_inicio.png`, `PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_monitoreo.png`, `PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_monitoreo_TIEMPOS.png`, `PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_monitoreo_RESULTADOS_1.png` y `PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_monitoreo_RESULTADOS_2.png`.
+   - Resultado (clúster, `./parcial.sh run PerceptronRegresion`; archivo `~/resultados/PerceptronRegresion_cluster.txt` en master): capturas [`PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_inicio.png`](imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_inicio.png), [`PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_monitoreo.png`](imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_monitoreo.png), [`PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_monitoreo_TIEMPOS.png`](imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_monitoreo_TIEMPOS.png), [`PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_monitoreo_RESULTADOS_1.png`](imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_monitoreo_RESULTADOS_1.png) y [`PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_monitoreo_RESULTADOS_2.png`](imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_master_workers_monitoreo_RESULTADOS_2.png).
 5. Ejecutar en el nodo único (PowerShell como administrador):
    ```powershell
    cd C:\Users\esauf\Desktop\uni\macro-datos\PARCIAL                         # carpeta de parcial.ps1
@@ -1193,7 +1193,7 @@ Pregunta: ¿cuántos heridos tendrá el accidente? Se predice `log(1 + CANT_HERI
    .\parcial.ps1 run PerceptronRegresion                                     # "Tiempo total" + métricas; lo guarda en PARCIAL\resultados\PerceptronRegresion_nodo_unico.txt 📷
    hadoop fs -cat /parcial_output/PerceptronRegresion_curva/part-00000       # curva de pérdida por época 📷
    ```
-   - Resultado: capturas `PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_one_nodo_windows_RESULTADOS.png` y `PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_one_nodo_windows_TIEMPOS.png`.
+   - Resultado: capturas [`PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_one_nodo_windows_RESULTADOS.png`](imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_one_nodo_windows_RESULTADOS.png) y [`PARCIAL/imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_one_nodo_windows_TIEMPOS.png`](imagenes/Desarrollo_2_3_2_PERCEPTRON_REGRESION_one_nodo_windows_TIEMPOS.png).
 6. Interpretación para el informe y comparación (después de ejecutar los pasos 4 y 5):
    - Qué mirar en el resultado: la curva debe bajar; `mse` hay que compararlo con `mse_base_media` (predecir siempre la media): `r2 > 0` significa que la red explica algo más que la media; `mae_heridos` es el error medio en cantidad de heridos.
    - Tabla que pide el enunciado (línea 51), TODO:
@@ -1270,7 +1270,7 @@ Se mide con `PuntosNegrosPorTramo`, la consulta más rápida (147.6 s en clúste
    .\parcial.ps1 run PuntosNegrosPorTramo
    ```
    Captura del Administrador de tareas (pestaña Rendimiento) con la consulta corriendo 📷.
-   - Resultado: `PARCIAL/imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS.png`, `PARCIAL/imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_2.png`, `PARCIAL/imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_3.png`; CPU y memoria: `PARCIAL/imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_4.png` (master), `PARCIAL/imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_5.png` (workers) y `PARCIAL/imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_UN_NODO_WINDOW.png` (Windows).
+   - Resultado: [`PARCIAL/imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS.png`](imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS.png), [`PARCIAL/imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_2.png`](imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_2.png), [`PARCIAL/imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_3.png`](imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_3.png); CPU y memoria: [`PARCIAL/imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_4.png`](imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_4.png) (master), [`PARCIAL/imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_5.png`](imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_5.png) (workers) y [`PARCIAL/imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_UN_NODO_WINDOW.png`](imagenes/Desarrollo_2_4_1_TABLA_DE_TIEMPOS_UN_NODO_WINDOW.png) (Windows).
 3. Tabla para el informe (PuntosNegrosPorTramo, 30 muestras de 5 s en cada VM, 17 en Windows):
 
    | Nodo | CPU promedio | Memoria libre promedio | Memoria usada = total − libre |
@@ -1344,7 +1344,7 @@ Se mide con `PuntosNegrosPorTramo`, la consulta más rápida (147.6 s en clúste
    - Comprobar: en la Vista de tabla (2.º icono de la barra izquierda), al seleccionar `centroide_lon` la barra de abajo debe decir 31 valores distintos (no 10).
    - Si quedó una consulta con ⚠ de un intento anterior, bloquea la carga ("Literal no válido"): Transformar datos → panel Consultas → clic derecho en la del ⚠ → Eliminar.
    - Latitud/Longitud: Vista de tabla → elegir la tabla en el panel Datos → clic en el encabezado de la columna → pestaña **Herramientas de columnas** (arriba, no se abre sola) → Categoría de datos: `lat`/`centroide_lat` = Latitud, `lon`/`centroide_lon` = Longitud (en `dbscan_puntos`, `dbscan_grupos` y `puntos_negros`).
-   - Capturas: `PARCIAL/imagenes/Desarrollo_2_4_3_POWER_BI_1.png`, `_2.png` (delimitador mal detectado), `_3_encabezado.png`, `_ERROR.png`, `_BDSCAN.png`, `_DATOS_CENTROIDES_COLUMNAS.png`, `_LATITUD_.png` (`-1169051`), `_LATITUD_CONFIGURACION.png`, `_TIPOS.png`, `_CAMBIAR_TIPO.png` (`centroide_lon` = `-76`), `_LATITUD_LONGITUD_HERRAMIENTAS.png` (todas con prefijo `PARCIAL/imagenes/Desarrollo_2_4_3_POWER_BI`).
+   - Capturas: [`PARCIAL/imagenes/Desarrollo_2_4_3_POWER_BI_1.png`](imagenes/Desarrollo_2_4_3_POWER_BI_1.png), [`_2.png`](imagenes/Desarrollo_2_4_3_POWER_BI_2.png) (delimitador mal detectado), [`_3_encabezado.png`](imagenes/Desarrollo_2_4_3_POWER_BI_3_encabezado.png), [`_ERROR.png`](imagenes/Desarrollo_2_4_3_POWER_BI_ERROR.png), [`_BDSCAN.png`](imagenes/Desarrollo_2_4_3_POWER_BI_BDSCAN.png), [`_DATOS_CENTROIDES_COLUMNAS.png`](imagenes/Desarrollo_2_4_3_POWER_BI_DATOS_CENTROIDES_COLUMNAS.png), [`_LATITUD_.png`](imagenes/Desarrollo_2_4_3_POWER_BI_LATITUD_.png) (`-1169051`), [`_LATITUD_CONFIGURACION.png`](imagenes/Desarrollo_2_4_3_POWER_BI_LATITUD_CONFIGURACION.png), [`_TIPOS.png`](imagenes/Desarrollo_2_4_3_POWER_BI_TIPOS.png), [`_CAMBIAR_TIPO.png`](imagenes/Desarrollo_2_4_3_POWER_BI_CAMBIAR_TIPO.png) (`centroide_lon` = `-76`), [`_LATITUD_LONGITUD_HERRAMIENTAS.png`](imagenes/Desarrollo_2_4_3_POWER_BI_LATITUD_LONGITUD_HERRAMIENTAS.png) (todas con prefijo `PARCIAL/imagenes/Desarrollo_2_4_3_POWER_BI`).
 4. Gráficos (panel Visualizaciones; arrastrar columnas a cada casilla):
 
    | # | Gráfico | Tabla | Visual y casillas |
@@ -1356,7 +1356,7 @@ Se mide con `PuntosNegrosPorTramo`, la consulta más rápida (147.6 s en clúste
    | 5 | Curva de pérdida | curvas | Líneas: Eje X = época, Eje Y = pérdida |
    | 6 | Tiempos clúster vs. nodo único | tabla 2.4.1 (Inicio → Especificar datos) | Barras agrupadas: Eje = consulta, Valores = tiempo clúster y tiempo nodo único |
 
-5. Entregables (obligatorios): Archivo → Guardar como → `PARCIAL\powerbi\parcial.pbix`; cada gráfico → "..." del visual → Exportar → imagen, o captura 📷 → `PARCIAL\imagenes\Desarrollo_2_4_3_POWERBI_<n>.png` (para la sección 6.5 del informe y la presentación).
+5. Entregables (obligatorios): Archivo → Guardar como → `PARCIAL\powerbi\parcial.pbix`; cada gráfico → "..." del visual → Exportar → imagen. [`archivo pbix`](powerbi/parcial.pbix)
 
 ### 2.5 Apagar y volver a arrancar (p. ej. para la exposición)
 
