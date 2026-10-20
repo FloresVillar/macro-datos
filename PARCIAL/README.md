@@ -1,7 +1,7 @@
 # PARCIAL – CC531 Análisis en Macrodatos 2026-2
 
-- Enunciado: [`CC531-parcial-20262.pdf`](CC531-parcial-20262.pdf) (versión md: [`CC531-parcial-20262.pdf.md`](CC531-parcial-20262.pdf.md))
-- Grupo 9 – Flores Villar Esaú – registrado en el cuadro de temas del curso (Google Sheets "Grupo de evaluación Macrodatos 26-2", hoja *Parcial*).
+- Enunciado: [`CC531-parcial-20262.pdf`](CC531-parcial-20262.pdf)  
+- Grupo 9 – Flores Villar Esaú – Jose Manuel Montalvo Espinoza  
 
 ## Dataset: Reportes preliminares de Accidentes – Centro de Gestión y Monitoreo
 
