@@ -2,6 +2,7 @@
 
 - Enunciado: [`CC531-parcial-20262.pdf`](CC531-parcial-20262.pdf)  
 - Grupo 9 – Flores Villar Esaú – Jose Manuel Montalvo Espinoza  
+- ISO de las VM: `ubuntu-26.04.1-live-server-amd64.iso` (https://releases.ubuntu.com/26.04/); no se versiona por su tamaño (2.8 GB)  
 
 ## Dataset: Reportes preliminares de Accidentes – Centro de Gestión y Monitoreo
 
