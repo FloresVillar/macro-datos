@@ -1,0 +1,12 @@
+# Ignorar instaladores e ISOs pesadas
+*.iso
+*.jar
+*.zip
+
+# Ignorar las carpetas de diapositivas de la universidad (semanas 1 a 7)
+semana_*/
+PARCIAL/
+
+# Ignorar bitácoras e imágenes de errores
+historial_agente/
+imagenes/

@@ -1,0 +1,73 @@
+https://drive.google.com/file/d/1TQqNzV4uSj3mq0MoZPYJKuurr0RjQis_/view?usp=sharing
+```python
+val txtShake = sc.textFile("shake.txt")   // RDD con una linea del archivo por elemento
+txtShake.collect                          // accion: trae todas las lineas al driver y las imprime
+
+val contar = txtShake.flatMap(line => line.split(" ")).map(word => (word,1)).reduceByKey(_ + _)   // parte por espacios (palabras), arma (palabra,1) y suma por palabra
+
+contar.count                              // accion: cuantas palabras distintas hay (67506)
+contar.collect                            // accion: trae todos los pares (palabra, cantidad) al driver
+contar.toDebugString                      // muestra el linaje: textFile -> flatMap -> map -> reduceByKey
+contar.cache()                            // marca el RDD para guardarlo en memoria cuando se calcule
+contar.saveAsTextFile("output_shake")     // accion: guarda el resultado en la carpeta output_shake
+
+```
+
+https://drive.google.com/file/d/1vr5VkWUnCx2Kd6Q7qxmXd0IbGrZYybbf/view?usp=sharing
+```python
+val lines = sc.textFile("shake.txt")                 // RDD con las lineas de shake.txt
+lines.collect                                        // accion: trae todas las lineas y las imprime
+val errorsexam = lines.filter(_.startsWith("The"))   // transformacion: deja solo las lineas que empiezan con "The" (_ = cada linea)
+errorsexam                                           // muestra el RDD (su tipo e ID), no su contenido: aun no se calculo
+errorsexam.collect                                   // accion: trae e imprime las lineas que empiezan con "The"
+errorsexam.persist()                                 // igual que cache(): lo guarda en memoria para las siguientes acciones
+errorsexam.count()                                   // accion: cuantas lineas empiezan con "The" (lo lee de memoria)
+
+val lineas = sc.textFile("shake.txt")                // otro RDD con las mismas lineas
+lineas.collect                                       // accion: trae todas las lineas
+lineas.count                                         // accion: total de lineas del archivo (124456)
+
+val errorsexam02 = lineas.filter(_.contains("they")) // deja las lineas que contienen "they" en cualquier parte (distingue mayusculas)
+errorsexam02.collect                                 // accion: trae esas lineas
+errorsexam02.count                                   // accion: cuantas son
+
+val errorsexam03 = lineas.filter(_.contains("They")) // igual pero con "They" en mayuscula: da otro resultado
+errorsexam03.collect                                 // accion: trae esas lineas
+errorsexam03.count                                   // accion: cuantas son
+
+// (2) y (4) = 3a y 5a palabra: si una linea tiene menos palabras da ArrayIndexOutOfBoundsException
+val errorsexam04 = errorsexam02.map(_.split(" ")(2)) // de cada linea con "they", parte por espacios y toma el elemento 2 (la 3a "palabra")
+errorsexam04.collect                                 // accion: trae esas palabras (aqui se ve si alguna linea da error)
+errorsexam04.count                                   // accion: cuantas son (igual a errorsexam02.count si no hay error)
+
+val errorsexam05 = errorsexam02.map(_.split(" ")(4)) // igual pero toma el elemento 4 (la 5a "palabra")
+errorsexam05.collect                                 // accion: trae esas palabras
+errorsexam05.count                                   // accion: cuantas son
+
+
+```
+https://drive.google.com/file/d/1lGHMttVbtc1eCmlbsCs9kc-SkBibq-AL/view?usp=sharing
+
+```python
+val logFile = "shake.txt"                                          // ruta del archivo, como texto
+val logData = spark.read.textFile(logFile).cache()                 // lo lee como Dataset[String] (API nueva, via spark = SparkSession) y lo marca para cache
+logData                                                            // muestra el tipo: [value: string] (una columna "value" por linea)
+logData.collect                                                    // accion: trae todas las lineas
+logData.count                                                      // accion: total de lineas (124456)
+
+val contA = logData.filter(line => line.contains("a")).count()     // cuantas lineas contienen la letra "a"
+val contB = logData.filter(line => line.contains("b")).count()     // cuantas lineas contienen la letra "b"
+println(s"Lineas con a: $contA, lineas con b: $contB")             // s"..." = texto con variables dentro ($contA)
+logData.first()                                                    // accion: la primera linea del archivo
+val contW = logData.filter(line => line.contains("without"))       // lineas que contienen "without"
+contW.collect                                                      // accion: trae esas lineas
+contW.first                                                        // accion: la primera de ellas
+contW.count                                                        // accion: cuantas son
+
+
+val contThe = logData.filter(line => line.contains("the"))         // lineas que contienen "the" (minuscula)
+contThe.collect                                                    // accion: trae esas lineas
+contThe.first                                                      // accion: la primera de ellas
+contThe.count                                                      // accion: cuantas son
+
+```

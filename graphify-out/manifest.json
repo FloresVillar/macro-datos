@@ -1,0 +1,644 @@
+{
+  ".claude/settings.json": {
+    "mtime": 1792265691.71006,
+    "seen": 1792266369.7011473,
+    "ast_hash": "1639362446716f80f5fe57af3af2b2a8",
+    "semantic_hash": "1639362446716f80f5fe57af3af2b2a8"
+  },
+  "MACRO-DATOS/source_Packages/01_TransaccionesPorPais/Driver.java": {
+    "mtime": 1789966898.723498,
+    "seen": 1792266369.701151,
+    "ast_hash": "c4664047b9f9e9daebbd7210e2e590a7",
+    "semantic_hash": "c4664047b9f9e9daebbd7210e2e590a7"
+  },
+  "MACRO-DATOS/source_Packages/01_TransaccionesPorPais/Mapper.java": {
+    "mtime": 1789958712.5869591,
+    "seen": 1792266369.7011526,
+    "ast_hash": "c5fec66ceb0382ab52f7a0fb5ca56995",
+    "semantic_hash": "c5fec66ceb0382ab52f7a0fb5ca56995"
+  },
+  "MACRO-DATOS/source_Packages/01_TransaccionesPorPais/Reducer.java": {
+    "mtime": 1789966968.324881,
+    "seen": 1792266369.7011535,
+    "ast_hash": "f9d2d1c298bceef3764636875e2b5103",
+    "semantic_hash": "f9d2d1c298bceef3764636875e2b5103"
+  },
+  "MACRO-DATOS/source_Packages/02_TransaccionesPorCiudad/Driver.java": {
+    "mtime": 1789966904.8705015,
+    "seen": 1792266369.7011542,
+    "ast_hash": "de78de329b01caff08cdb6ce87558d5e",
+    "semantic_hash": "de78de329b01caff08cdb6ce87558d5e"
+  },
+  "MACRO-DATOS/source_Packages/02_TransaccionesPorCiudad/Mapper.java": {
+    "mtime": 1789966973.5373936,
+    "seen": 1792266369.7011552,
+    "ast_hash": "7b51113a9c87e0d86de75ddbdbd94904",
+    "semantic_hash": "7b51113a9c87e0d86de75ddbdbd94904"
+  },
+  "MACRO-DATOS/source_Packages/02_TransaccionesPorCiudad/Reducer.java": {
+    "mtime": 1789966977.266891,
+    "seen": 1792266369.7011564,
+    "ast_hash": "e2a0274373f5d397a2097bc18d730a57",
+    "semantic_hash": "e2a0274373f5d397a2097bc18d730a57"
+  },
+  "MACRO-DATOS/source_Packages/03_SumaPreciosProductos/Driver.java": {
+    "mtime": 1789966910.8671565,
+    "seen": 1792266369.701157,
+    "ast_hash": "9b25cc9d25f2451d4b831ff0789d3662",
+    "semantic_hash": "9b25cc9d25f2451d4b831ff0789d3662"
+  },
+  "MACRO-DATOS/source_Packages/03_SumaPreciosProductos/Mapper.java": {
+    "mtime": 1789969955.2500713,
+    "seen": 1792266369.7011578,
+    "ast_hash": "0d0fe1cdc2fc57cbd722eb6af8e3a4ca",
+    "semantic_hash": "0d0fe1cdc2fc57cbd722eb6af8e3a4ca"
+  },
+  "MACRO-DATOS/source_Packages/03_SumaPreciosProductos/Reducer.java": {
+    "mtime": 1789966986.8397346,
+    "seen": 1792266369.7011588,
+    "ast_hash": "9a1e27f586181ac17d9e5acdf56fd043",
+    "semantic_hash": "9a1e27f586181ac17d9e5acdf56fd043"
+  },
+  "MACRO-DATOS/source_Packages/04_SumaPreciosProduct3/Driver.java": {
+    "mtime": 1789966916.8275433,
+    "seen": 1792266369.7011592,
+    "ast_hash": "845f38d63687b54a864a89fd305b8aaa",
+    "semantic_hash": "845f38d63687b54a864a89fd305b8aaa"
+  },
+  "MACRO-DATOS/source_Packages/04_SumaPreciosProduct3/Mapper.java": {
+    "mtime": 1789969958.0801635,
+    "seen": 1792266369.7011602,
+    "ast_hash": "02347234056e98bb596203285e291a1f",
+    "semantic_hash": "02347234056e98bb596203285e291a1f"
+  },
+  "MACRO-DATOS/source_Packages/04_SumaPreciosProduct3/Reducer.java": {
+    "mtime": 1789966995.9034126,
+    "seen": 1792266369.701161,
+    "ast_hash": "2a92e0ed49634adb68a8944175c037e3",
+    "semantic_hash": "2a92e0ed49634adb68a8944175c037e3"
+  },
+  "MACRO-DATOS/source_Packages/05_SumaPreciosPorTipoProducto/Driver.java": {
+    "mtime": 1789966924.372157,
+    "seen": 1792266369.7011614,
+    "ast_hash": "819c37201e68f0e6e70da3d71de65b52",
+    "semantic_hash": "819c37201e68f0e6e70da3d71de65b52"
+  },
+  "MACRO-DATOS/source_Packages/05_SumaPreciosPorTipoProducto/Mapper.java": {
+    "mtime": 1789969961.3477547,
+    "seen": 1792266369.7011623,
+    "ast_hash": "9af3ae5c5c0571691ac42f6c803d11ba",
+    "semantic_hash": "9af3ae5c5c0571691ac42f6c803d11ba"
+  },
+  "MACRO-DATOS/source_Packages/05_SumaPreciosPorTipoProducto/Reducer.java": {
+    "mtime": 1789967004.4180982,
+    "seen": 1792266369.7011628,
+    "ast_hash": "3058305af3994dfc4920ea7e058ee363",
+    "semantic_hash": "3058305af3994dfc4920ea7e058ee363"
+  },
+  "MACRO-DATOS/source_Packages/06_SumaPreciosPorProductoYPago/Driver.java": {
+    "mtime": 1789966930.3328736,
+    "seen": 1792266369.7011638,
+    "ast_hash": "abab7a7274f8c73dc13d9a08ddccfe6d",
+    "semantic_hash": "abab7a7274f8c73dc13d9a08ddccfe6d"
+  },
+  "MACRO-DATOS/source_Packages/06_SumaPreciosPorProductoYPago/Mapper.java": {
+    "mtime": 1789969964.2219021,
+    "seen": 1792266369.7011642,
+    "ast_hash": "586bd7dcd2854a69c23a4739758f354a",
+    "semantic_hash": "586bd7dcd2854a69c23a4739758f354a"
+  },
+  "MACRO-DATOS/source_Packages/06_SumaPreciosPorProductoYPago/Reducer.java": {
+    "mtime": 1789967013.8584323,
+    "seen": 1792266369.7011647,
+    "ast_hash": "a89fedafbc95043623c53babb8035214",
+    "semantic_hash": "a89fedafbc95043623c53babb8035214"
+  },
+  "MACRO-DATOS/source_Packages/07_PrecioProductoMasCostoso/Driver.java": {
+    "mtime": 1789966936.0783353,
+    "seen": 1792266369.7011657,
+    "ast_hash": "25741f742a162d05d2370fb2485db4bd",
+    "semantic_hash": "25741f742a162d05d2370fb2485db4bd"
+  },
+  "MACRO-DATOS/source_Packages/07_PrecioProductoMasCostoso/Mapper.java": {
+    "mtime": 1789969967.279764,
+    "seen": 1792266369.7011664,
+    "ast_hash": "c28707bc87ddb8589b9964ab7fd37f2c",
+    "semantic_hash": "c28707bc87ddb8589b9964ab7fd37f2c"
+  },
+  "MACRO-DATOS/source_Packages/07_PrecioProductoMasCostoso/Reducer.java": {
+    "mtime": 1789967023.333054,
+    "seen": 1792266369.701167,
+    "ast_hash": "d6cb27fe32769dc9a67c09d7d73699ab",
+    "semantic_hash": "d6cb27fe32769dc9a67c09d7d73699ab"
+  },
+  "MACRO-DATOS/source_Packages/08_PrecioMasBaratoProduct1/Driver.java": {
+    "mtime": 1789966941.9609609,
+    "seen": 1792266369.7011678,
+    "ast_hash": "a88d26513390006d7bfdaa6802222a46",
+    "semantic_hash": "a88d26513390006d7bfdaa6802222a46"
+  },
+  "MACRO-DATOS/source_Packages/08_PrecioMasBaratoProduct1/Mapper.java": {
+    "mtime": 1789969970.789942,
+    "seen": 1792266369.7011683,
+    "ast_hash": "d64fe2e0dc43dc8be2e4a43e1a6c8613",
+    "semantic_hash": "d64fe2e0dc43dc8be2e4a43e1a6c8613"
+  },
+  "MACRO-DATOS/source_Packages/08_PrecioMasBaratoProduct1/Reducer.java": {
+    "mtime": 1789967031.7802129,
+    "seen": 1792266369.7011693,
+    "ast_hash": "1ed2b71aa5037d846000984122040efc",
+    "semantic_hash": "1ed2b71aa5037d846000984122040efc"
+  },
+  "MACRO-DATOS/source_Packages/10_TarjetaMasUsadaPorCiudadPais/Driver.java": {
+    "mtime": 1789966948.4687243,
+    "seen": 1792266369.70117,
+    "ast_hash": "fce2ae6eb4982a6be5624c9cbcfcd2b5",
+    "semantic_hash": "fce2ae6eb4982a6be5624c9cbcfcd2b5"
+  },
+  "MACRO-DATOS/source_Packages/10_TarjetaMasUsadaPorCiudadPais/Mapper.java": {
+    "mtime": 1789969973.5480306,
+    "seen": 1792266369.7011707,
+    "ast_hash": "49a00eea9a68e461074d4f96a2b0ebaa",
+    "semantic_hash": "49a00eea9a68e461074d4f96a2b0ebaa"
+  },
+  "MACRO-DATOS/source_Packages/10_TarjetaMasUsadaPorCiudadPais/Reducer.java": {
+    "mtime": 1789967042.1511278,
+    "seen": 1792266369.7011714,
+    "ast_hash": "cf5c8af4279d9deca9dd2310396e21ce",
+    "semantic_hash": "cf5c8af4279d9deca9dd2310396e21ce"
+  },
+  "MACRO-DATOS/source_Packages/11_DesviacionEstandarPrecios/Driver.java": {
+    "mtime": 1789966956.3362794,
+    "seen": 1792266369.701172,
+    "ast_hash": "7ffec7b21cd431b173542efc91026a84",
+    "semantic_hash": "7ffec7b21cd431b173542efc91026a84"
+  },
+  "MACRO-DATOS/source_Packages/11_DesviacionEstandarPrecios/Mapper.java": {
+    "mtime": 1789969976.9217675,
+    "seen": 1792266369.701173,
+    "ast_hash": "b5bf8229c03545ea8725d1e20384f6b0",
+    "semantic_hash": "b5bf8229c03545ea8725d1e20384f6b0"
+  },
+  "MACRO-DATOS/source_Packages/11_DesviacionEstandarPrecios/Reducer.java": {
+    "mtime": 1789967051.842471,
+    "seen": 1792266369.7011738,
+    "ast_hash": "728b5e705a66c50bcec465b662acb3db",
+    "semantic_hash": "728b5e705a66c50bcec465b662acb3db"
+  },
+  "MACRO-DATOS/source_Packages/12_BuscarUnitedKingdom/Driver.java": {
+    "mtime": 1789966962.0435472,
+    "seen": 1792266369.7011745,
+    "ast_hash": "147a1279bea64fc4945fcbdf34d03def",
+    "semantic_hash": "147a1279bea64fc4945fcbdf34d03def"
+  },
+  "MACRO-DATOS/source_Packages/12_BuscarUnitedKingdom/Mapper.java": {
+    "mtime": 1789967056.1487277,
+    "seen": 1792266369.701175,
+    "ast_hash": "d5835714ae42f01613cdac0e2ffe8579",
+    "semantic_hash": "d5835714ae42f01613cdac0e2ffe8579"
+  },
+  "MACRO-DATOS/source_Packages/12_BuscarUnitedKingdom/Reducer.java": {
+    "mtime": 1789967060.38305,
+    "seen": 1792266369.7011755,
+    "ast_hash": "1ea1a7534c1bef0bc689f6a0be998a4b",
+    "semantic_hash": "1ea1a7534c1bef0bc689f6a0be998a4b"
+  },
+  "MACRO-DATOS/source_Packages/13_PaisProductoMayorFacturacion/Driver.java": {
+    "mtime": 1790118926.8987184,
+    "seen": 1792266369.7011764,
+    "ast_hash": "482ac234776ccbf349e0d1c25ba53fdf",
+    "semantic_hash": "482ac234776ccbf349e0d1c25ba53fdf"
+  },
+  "MACRO-DATOS/source_Packages/13_PaisProductoMayorFacturacion/Mapper.java": {
+    "mtime": 1790118926.8646467,
+    "seen": 1792266369.701177,
+    "ast_hash": "e33ce22e767cd34b31da16f2e9d9f2c8",
+    "semantic_hash": "e33ce22e767cd34b31da16f2e9d9f2c8"
+  },
+  "MACRO-DATOS/source_Packages/13_PaisProductoMayorFacturacion/MapperMaximo.java": {
+    "mtime": 1790118926.8832166,
+    "seen": 1792266369.7011776,
+    "ast_hash": "553ac0a9570ce98cd2ccdd3d86c54231",
+    "semantic_hash": "553ac0a9570ce98cd2ccdd3d86c54231"
+  },
+  "MACRO-DATOS/source_Packages/13_PaisProductoMayorFacturacion/Reducer.java": {
+    "mtime": 1790118926.8728929,
+    "seen": 1792266369.7011783,
+    "ast_hash": "f5b52305c1fc8e3cf0bba5ea9cb76768",
+    "semantic_hash": "f5b52305c1fc8e3cf0bba5ea9cb76768"
+  },
+  "MACRO-DATOS/source_Packages/13_PaisProductoMayorFacturacion/ReducerMaximo.java": {
+    "mtime": 1790118926.8947415,
+    "seen": 1792266369.701179,
+    "ast_hash": "03759cca4fa41ba2a1f42f0f08857aa4",
+    "semantic_hash": "03759cca4fa41ba2a1f42f0f08857aa4"
+  },
+  "PC1/source_Packages/1a_RecursosPorRegionCategoria/Driver.java": {
+    "mtime": 1789975394.6267676,
+    "seen": 1792266369.7011797,
+    "ast_hash": "9d7a50bede7a75a35dff7be7205ad537",
+    "semantic_hash": "9d7a50bede7a75a35dff7be7205ad537"
+  },
+  "PC1/source_Packages/1a_RecursosPorRegionCategoria/Mapper.java": {
+    "mtime": 1789975201.0179582,
+    "seen": 1792266369.7011805,
+    "ast_hash": "9f412675f190e1bf331a7622be63d9b3",
+    "semantic_hash": "9f412675f190e1bf331a7622be63d9b3"
+  },
+  "PC1/source_Packages/1a_RecursosPorRegionCategoria/Reducer.java": {
+    "mtime": 1789975387.6315446,
+    "seen": 1792266369.701181,
+    "ast_hash": "3228fa1ac6b7bad86f35d0e8a3eaa464",
+    "semantic_hash": "3228fa1ac6b7bad86f35d0e8a3eaa464"
+  },
+  "PC1/source_Packages/1b_RecursosPorProvinciaTipo/Driver.java": {
+    "mtime": 1789976461.548007,
+    "seen": 1792266369.7011814,
+    "ast_hash": "69a10c3c7a906c2cc32ca9d1159c12c8",
+    "semantic_hash": "69a10c3c7a906c2cc32ca9d1159c12c8"
+  },
+  "PC1/source_Packages/1b_RecursosPorProvinciaTipo/Mapper.java": {
+    "mtime": 1789976449.5145314,
+    "seen": 1792266369.7011845,
+    "ast_hash": "deafdadeaa0583cdbd332a38bf3a6e70",
+    "semantic_hash": "deafdadeaa0583cdbd332a38bf3a6e70"
+  },
+  "PC1/source_Packages/1b_RecursosPorProvinciaTipo/Reducer.java": {
+    "mtime": 1789976453.9897103,
+    "seen": 1792266369.7011855,
+    "ast_hash": "b4703e66ab7692d5dc6013d3c5ab1a5e",
+    "semantic_hash": "b4703e66ab7692d5dc6013d3c5ab1a5e"
+  },
+  "PC1/source_Packages/1c_RecursosPorDistritoSubtipo/Driver.java": {
+    "mtime": 1789976479.8589184,
+    "seen": 1792266369.7011864,
+    "ast_hash": "08627e42fa4c45520b3f224753396b60",
+    "semantic_hash": "08627e42fa4c45520b3f224753396b60"
+  },
+  "PC1/source_Packages/1c_RecursosPorDistritoSubtipo/Mapper.java": {
+    "mtime": 1789976468.0210543,
+    "seen": 1792266369.7011871,
+    "ast_hash": "c1a439f9aa2c23d5365a83bffd8f605f",
+    "semantic_hash": "c1a439f9aa2c23d5365a83bffd8f605f"
+  },
+  "PC1/source_Packages/1c_RecursosPorDistritoSubtipo/Reducer.java": {
+    "mtime": 1789976472.3678124,
+    "seen": 1792266369.7011878,
+    "ast_hash": "94dac17d8668f675adb8190963a058a8",
+    "semantic_hash": "94dac17d8668f675adb8190963a058a8"
+  },
+  "PC1/source_Packages/1d_ManifestacionesCulturalesPorRegion/Driver.java": {
+    "mtime": 1789976497.487596,
+    "seen": 1792266369.7011883,
+    "ast_hash": "99ec3d4e99655fff368fdeaace045f67",
+    "semantic_hash": "99ec3d4e99655fff368fdeaace045f67"
+  },
+  "PC1/source_Packages/1d_ManifestacionesCulturalesPorRegion/Mapper.java": {
+    "mtime": 1789976485.9326854,
+    "seen": 1792266369.701189,
+    "ast_hash": "95ae4f647d58333ef53615853bb11b71",
+    "semantic_hash": "95ae4f647d58333ef53615853bb11b71"
+  },
+  "PC1/source_Packages/1d_ManifestacionesCulturalesPorRegion/Reducer.java": {
+    "mtime": 1789976490.1801302,
+    "seen": 1792266369.7011895,
+    "ast_hash": "cd542127958162bd73d90ad69e5b8f87",
+    "semantic_hash": "cd542127958162bd73d90ad69e5b8f87"
+  },
+  "PC1/source_Packages/1e_RankingRegionCategoria/Driver.java": {
+    "mtime": 1789976528.1383717,
+    "seen": 1792266369.7011902,
+    "ast_hash": "16dd7376134f251ed27e7987a209d487",
+    "semantic_hash": "16dd7376134f251ed27e7987a209d487"
+  },
+  "PC1/source_Packages/1e_RankingRegionCategoria/Mapper.java": {
+    "mtime": 1789976509.9485378,
+    "seen": 1792266369.701191,
+    "ast_hash": "5a1dd69a4af08c0b14f53f08546110f7",
+    "semantic_hash": "5a1dd69a4af08c0b14f53f08546110f7"
+  },
+  "PC1/source_Packages/1e_RankingRegionCategoria/Reducer.java": {
+    "mtime": 1789976517.8956718,
+    "seen": 1792266369.7011917,
+    "ast_hash": "c72d53d72554a4633a336ac46f5b3fe9",
+    "semantic_hash": "c72d53d72554a4633a336ac46f5b3fe9"
+  },
+  "PC1/source_Packages/2_EstadisticasLatitud/Driver.java": {
+    "mtime": 1789977367.0685542,
+    "seen": 1792266369.7011924,
+    "ast_hash": "5f07c276bcc62add1179f75f5811fb8b",
+    "semantic_hash": "5f07c276bcc62add1179f75f5811fb8b"
+  },
+  "PC1/source_Packages/2_EstadisticasLatitud/Mapper.java": {
+    "mtime": 1790105478.858012,
+    "seen": 1792266369.7011929,
+    "ast_hash": "29976b3a6b03398a893780ae446971cb",
+    "semantic_hash": "29976b3a6b03398a893780ae446971cb"
+  },
+  "PC1/source_Packages/2_EstadisticasLatitud/Reducer.java": {
+    "mtime": 1789977358.8828826,
+    "seen": 1792266369.7011936,
+    "ast_hash": "436f939060dac434734e1a81187085a2",
+    "semantic_hash": "436f939060dac434734e1a81187085a2"
+  },
+  "PC1/source_Packages/3_BusquedaPorPalabraClave/Driver.java": {
+    "mtime": 1789977390.0556903,
+    "seen": 1792266369.7011943,
+    "ast_hash": "533bed817eb1f9f5ca3536be36c96569",
+    "semantic_hash": "533bed817eb1f9f5ca3536be36c96569"
+  },
+  "PC1/source_Packages/3_BusquedaPorPalabraClave/Mapper.java": {
+    "mtime": 1789977376.4839938,
+    "seen": 1792266369.7011948,
+    "ast_hash": "ec22798a4cc3be6c2d3b1d6cba57bed1",
+    "semantic_hash": "ec22798a4cc3be6c2d3b1d6cba57bed1"
+  },
+  "PC1/source_Packages/3_BusquedaPorPalabraClave/Reducer.java": {
+    "mtime": 1789977381.8489447,
+    "seen": 1792266369.7011955,
+    "ast_hash": "97eee6fe5953c5ed16afb0de3e4386f9",
+    "semantic_hash": "97eee6fe5953c5ed16afb0de3e4386f9"
+  },
+  "PC1/source_Packages/4_ExtremosGeograficosPorRegion/Driver.java": {
+    "mtime": 1789977413.6743202,
+    "seen": 1792266369.701196,
+    "ast_hash": "0ad28c598da2a094954de07f9e1ba3f6",
+    "semantic_hash": "0ad28c598da2a094954de07f9e1ba3f6"
+  },
+  "PC1/source_Packages/4_ExtremosGeograficosPorRegion/Mapper.java": {
+    "mtime": 1790105478.863424,
+    "seen": 1792266369.7011964,
+    "ast_hash": "852a1dd181e7ddc424ec203058f05906",
+    "semantic_hash": "852a1dd181e7ddc424ec203058f05906"
+  },
+  "PC1/source_Packages/4_ExtremosGeograficosPorRegion/Reducer.java": {
+    "mtime": 1789977406.307054,
+    "seen": 1792266369.7011976,
+    "ast_hash": "ab06360688fd1a2dacf82a750cf38e7b",
+    "semantic_hash": "ab06360688fd1a2dacf82a750cf38e7b"
+  },
+  "PC1/source_Packages/5a1_PromedioLatitudPorRegion/Driver.java": {
+    "mtime": 1789978044.451544,
+    "seen": 1792266369.701198,
+    "ast_hash": "5ae264ba8ea697303b81cd14cbdab4ea",
+    "semantic_hash": "5ae264ba8ea697303b81cd14cbdab4ea"
+  },
+  "PC1/source_Packages/5a1_PromedioLatitudPorRegion/Mapper.java": {
+    "mtime": 1790105478.868611,
+    "seen": 1792266369.7011986,
+    "ast_hash": "6417252c149327cf8b92b617fc8a822a",
+    "semantic_hash": "6417252c149327cf8b92b617fc8a822a"
+  },
+  "PC1/source_Packages/5a1_PromedioLatitudPorRegion/Reducer.java": {
+    "mtime": 1789978035.312178,
+    "seen": 1792266369.7011993,
+    "ast_hash": "ef643180f9c81f31d2d8fe64b15445d0",
+    "semantic_hash": "ef643180f9c81f31d2d8fe64b15445d0"
+  },
+  "PC1/source_Packages/5a2_ClasificarNorteSurRegion/Driver.java": {
+    "mtime": 1789978087.6049569,
+    "seen": 1792266369.7011998,
+    "ast_hash": "8f82b9b6baf55b1ef844f75753736c4b",
+    "semantic_hash": "8f82b9b6baf55b1ef844f75753736c4b"
+  },
+  "PC1/source_Packages/5a2_ClasificarNorteSurRegion/Mapper.java": {
+    "mtime": 1790105478.8711119,
+    "seen": 1792266369.7012007,
+    "ast_hash": "5a746f3de3d0d2351fb5300e36b3eb52",
+    "semantic_hash": "5a746f3de3d0d2351fb5300e36b3eb52"
+  },
+  "PC1/source_Packages/5a2_ClasificarNorteSurRegion/Reducer.java": {
+    "mtime": 1789978077.9499257,
+    "seen": 1792266369.7012012,
+    "ast_hash": "dc294a81e0bd253b229adbceb4f16a6e",
+    "semantic_hash": "dc294a81e0bd253b229adbceb4f16a6e"
+  },
+  "PC1/source_Packages/5b1_PromedioLongitudPorRegion/Driver.java": {
+    "mtime": 1789978108.8678951,
+    "seen": 1792266369.7012017,
+    "ast_hash": "eea961458a95e25e99f5ff91f056d879",
+    "semantic_hash": "eea961458a95e25e99f5ff91f056d879"
+  },
+  "PC1/source_Packages/5b1_PromedioLongitudPorRegion/Mapper.java": {
+    "mtime": 1790105478.876506,
+    "seen": 1792266369.7012024,
+    "ast_hash": "ef702959ecfc8d7ea287feb2935c3fe8",
+    "semantic_hash": "ef702959ecfc8d7ea287feb2935c3fe8"
+  },
+  "PC1/source_Packages/5b1_PromedioLongitudPorRegion/Reducer.java": {
+    "mtime": 1789978100.617967,
+    "seen": 1792266369.7012029,
+    "ast_hash": "e327052c4282c1a7685160037f4f3141",
+    "semantic_hash": "e327052c4282c1a7685160037f4f3141"
+  },
+  "PC1/source_Packages/5b2_ClasificarEsteOesteRegion/Driver.java": {
+    "mtime": 1789978133.037716,
+    "seen": 1792266369.7012033,
+    "ast_hash": "6214fa0c91a10fb50071391b7cfbd2b4",
+    "semantic_hash": "6214fa0c91a10fb50071391b7cfbd2b4"
+  },
+  "PC1/source_Packages/5b2_ClasificarEsteOesteRegion/Mapper.java": {
+    "mtime": 1790105478.8794765,
+    "seen": 1792266369.7012043,
+    "ast_hash": "e4ccca8d678a07f5267db5f1cfe03c58",
+    "semantic_hash": "e4ccca8d678a07f5267db5f1cfe03c58"
+  },
+  "PC1/source_Packages/5b2_ClasificarEsteOesteRegion/Reducer.java": {
+    "mtime": 1789978124.203432,
+    "seen": 1792266369.7012048,
+    "ast_hash": "e004f42d095307be5f7ca3606fe2f171",
+    "semantic_hash": "e004f42d095307be5f7ca3606fe2f171"
+  },
+  "PC1/source_Packages/6a1_CentroidesCategoria/Driver.java": {
+    "mtime": 1789978269.1498084,
+    "seen": 1792266369.7012055,
+    "ast_hash": "01b9e4f40a6f6921406e483e1ebdb1e9",
+    "semantic_hash": "01b9e4f40a6f6921406e483e1ebdb1e9"
+  },
+  "PC1/source_Packages/6a1_CentroidesCategoria/Mapper.java": {
+    "mtime": 1790105478.8825772,
+    "seen": 1792266369.701206,
+    "ast_hash": "7ad04028b66c9ac1674f3f010fd1733b",
+    "semantic_hash": "7ad04028b66c9ac1674f3f010fd1733b"
+  },
+  "PC1/source_Packages/6a1_CentroidesCategoria/Reducer.java": {
+    "mtime": 1789978262.3896482,
+    "seen": 1792266369.7012064,
+    "ast_hash": "8320deecd8bc1fef0e7b02e26c8f24fe",
+    "semantic_hash": "8320deecd8bc1fef0e7b02e26c8f24fe"
+  },
+  "PC1/source_Packages/6a2_ClasificarPorCentroideCategoria/Driver.java": {
+    "mtime": 1789978296.2631729,
+    "seen": 1792266369.7012074,
+    "ast_hash": "1d1ee500f76ebea76c28a41983d41fff",
+    "semantic_hash": "1d1ee500f76ebea76c28a41983d41fff"
+  },
+  "PC1/source_Packages/6a2_ClasificarPorCentroideCategoria/Mapper.java": {
+    "mtime": 1790105478.8920648,
+    "seen": 1792266369.701208,
+    "ast_hash": "b5b5ebd8b32b5c31cab364d4e39ac4a7",
+    "semantic_hash": "b5b5ebd8b32b5c31cab364d4e39ac4a7"
+  },
+  "PC1/source_Packages/6a2_ClasificarPorCentroideCategoria/Reducer.java": {
+    "mtime": 1789978288.8436072,
+    "seen": 1792266369.7012086,
+    "ast_hash": "39cb23abc2b519db0dc2050513507d34",
+    "semantic_hash": "39cb23abc2b519db0dc2050513507d34"
+  },
+  "PC1/source_Packages/6b1_CentroidesRegion/Driver.java": {
+    "mtime": 1789978314.3953369,
+    "seen": 1792266369.7012093,
+    "ast_hash": "52cd2a04a80d1533263eaa98774f9265",
+    "semantic_hash": "52cd2a04a80d1533263eaa98774f9265"
+  },
+  "PC1/source_Packages/6b1_CentroidesRegion/Mapper.java": {
+    "mtime": 1790105478.8853693,
+    "seen": 1792266369.7012098,
+    "ast_hash": "9c023e2a8b76ef13d814b0da0eb61128",
+    "semantic_hash": "9c023e2a8b76ef13d814b0da0eb61128"
+  },
+  "PC1/source_Packages/6b1_CentroidesRegion/Reducer.java": {
+    "mtime": 1789978308.8283668,
+    "seen": 1792266369.7012103,
+    "ast_hash": "16807a1869fb70c757f029c6e9040d51",
+    "semantic_hash": "16807a1869fb70c757f029c6e9040d51"
+  },
+  "PC1/source_Packages/6b2_ClasificarPorCentroideRegion/Driver.java": {
+    "mtime": 1789978338.264465,
+    "seen": 1792266369.7012112,
+    "ast_hash": "d130f29a313c0ac53d8dcb32bfd5226a",
+    "semantic_hash": "d130f29a313c0ac53d8dcb32bfd5226a"
+  },
+  "PC1/source_Packages/6b2_ClasificarPorCentroideRegion/Mapper.java": {
+    "mtime": 1790105478.8947837,
+    "seen": 1792266369.7012117,
+    "ast_hash": "881a748f052801835c9e574b15ced54d",
+    "semantic_hash": "881a748f052801835c9e574b15ced54d"
+  },
+  "PC1/source_Packages/6b2_ClasificarPorCentroideRegion/Reducer.java": {
+    "mtime": 1789978332.1247432,
+    "seen": 1792266369.701213,
+    "ast_hash": "41bec7ca0778f9205db70fa82954ca41",
+    "semantic_hash": "41bec7ca0778f9205db70fa82954ca41"
+  },
+  "PC1/source_Packages/7a_RegresionLongitudDesdeLatitud/Driver.java": {
+    "mtime": 1789978362.5631077,
+    "seen": 1792266369.7012134,
+    "ast_hash": "c93f0ea8088f88fe41d2de9ba7751393",
+    "semantic_hash": "c93f0ea8088f88fe41d2de9ba7751393"
+  },
+  "PC1/source_Packages/7a_RegresionLongitudDesdeLatitud/Mapper.java": {
+    "mtime": 1790105478.8892698,
+    "seen": 1792266369.7012143,
+    "ast_hash": "b2fa2accb15d56298dd8ae73e7847ee7",
+    "semantic_hash": "b2fa2accb15d56298dd8ae73e7847ee7"
+  },
+  "PC1/source_Packages/7a_RegresionLongitudDesdeLatitud/Reducer.java": {
+    "mtime": 1789978356.7143085,
+    "seen": 1792266369.7012148,
+    "ast_hash": "d43656cbdc2ffdda0b53b2b7b4e7f3d2",
+    "semantic_hash": "d43656cbdc2ffdda0b53b2b7b4e7f3d2"
+  },
+  "PC1/source_Packages/7b1_ConteoPorProvincia/Driver.java": {
+    "mtime": 1789978386.5822358,
+    "seen": 1792266369.7012155,
+    "ast_hash": "ae8c795e81737f360f7a03345e6aa873",
+    "semantic_hash": "ae8c795e81737f360f7a03345e6aa873"
+  },
+  "PC1/source_Packages/7b1_ConteoPorProvincia/Mapper.java": {
+    "mtime": 1789978374.783658,
+    "seen": 1792266369.701216,
+    "ast_hash": "6b612ce3ebee2d7165fc6e9e99e7c6b6",
+    "semantic_hash": "6b612ce3ebee2d7165fc6e9e99e7c6b6"
+  },
+  "PC1/source_Packages/7b1_ConteoPorProvincia/Reducer.java": {
+    "mtime": 1789978381.0204568,
+    "seen": 1792266369.7012167,
+    "ast_hash": "045c61f4f26234c790a38fb599582094",
+    "semantic_hash": "045c61f4f26234c790a38fb599582094"
+  },
+  "PC1/source_Packages/7b2_RegresionRecursosPorDistritos/Driver.java": {
+    "mtime": 1789978409.206422,
+    "seen": 1792266369.7012177,
+    "ast_hash": "02a83748c70aa9aac112cc1dd66e7722",
+    "semantic_hash": "02a83748c70aa9aac112cc1dd66e7722"
+  },
+  "PC1/source_Packages/7b2_RegresionRecursosPorDistritos/Mapper.java": {
+    "mtime": 1789978394.1967795,
+    "seen": 1792266369.7012184,
+    "ast_hash": "7fcacefcab8fc0cb3173076af671bfc3",
+    "semantic_hash": "7fcacefcab8fc0cb3173076af671bfc3"
+  },
+  "PC1/source_Packages/7b2_RegresionRecursosPorDistritos/Reducer.java": {
+    "mtime": 1789978402.662038,
+    "seen": 1792266369.701219,
+    "ast_hash": "a61160093c1e46c2402ea09aa5e6e575",
+    "semantic_hash": "a61160093c1e46c2402ea09aa5e6e575"
+  },
+  "Ventas File-20260908/Ventas/SalesCountryDriver.java": {
+    "mtime": 1789954653.76009,
+    "seen": 1792266369.7012198,
+    "ast_hash": "e1d616b3d925fefafc590113d7501949",
+    "semantic_hash": "e1d616b3d925fefafc590113d7501949"
+  },
+  "Ventas File-20260908/Ventas/SalesCountryReducer.java": {
+    "mtime": 1789955444.6542122,
+    "seen": 1792266369.7012205,
+    "ast_hash": "a78f8e88aebd5e6e2a395d33b0c08695",
+    "semantic_hash": "a78f8e88aebd5e6e2a395d33b0c08695"
+  },
+  "Ventas File-20260908/Ventas/SalesMapper.java": {
+    "mtime": 1789955813.4797945,
+    "seen": 1792266369.7012215,
+    "ast_hash": "4ab56a1f5d32d172b1040b84c9741121",
+    "semantic_hash": "4ab56a1f5d32d172b1040b84c9741121"
+  },
+  "hadoop.ps1": {
+    "mtime": 1789977758.043476,
+    "seen": 1792266369.7012222,
+    "ast_hash": "cfa6c853d3826ef9e99f5e4374590791",
+    "semantic_hash": "cfa6c853d3826ef9e99f5e4374590791"
+  },
+  "CLAUDE.md": {
+    "mtime": 1792265691.6939344,
+    "seen": 1792266369.7012234,
+    "ast_hash": "67d88e9d0760c3ba54c75dfd9551c1c5",
+    "semantic_hash": "67d88e9d0760c3ba54c75dfd9551c1c5"
+  },
+  "GUIA_EJECUCION.md": {
+    "mtime": 1790816104.1918762,
+    "seen": 1792266369.701224,
+    "ast_hash": "e62e2a20bf94becff34a68ae673d332e",
+    "semantic_hash": "e62e2a20bf94becff34a68ae673d332e"
+  },
+  "README.md": {
+    "mtime": 1790815955.0442247,
+    "seen": 1792266369.7012284,
+    "ast_hash": "65e644ea7feb53a7c657a3fc4de3d6f3",
+    "semantic_hash": "65e644ea7feb53a7c657a3fc4de3d6f3"
+  },
+  "mapreduce2/SalesCountryDriver.txt": {
+    "mtime": 1789950772.1515644,
+    "seen": 1792266369.7012296,
+    "ast_hash": "bcc87675ffeda46e0175a57a975d7eb3",
+    "semantic_hash": "bcc87675ffeda46e0175a57a975d7eb3"
+  },
+  "mapreduce2/SalesCountryReducer.txt": {
+    "mtime": 1789950772.1549702,
+    "seen": 1792266369.70123,
+    "ast_hash": "fb8ddc4a03a7fefb1e06d53b8c031df4",
+    "semantic_hash": "fb8ddc4a03a7fefb1e06d53b8c031df4"
+  },
+  "mapreduce2/SalesMapper.txt": {
+    "mtime": 1789950772.1549702,
+    "seen": 1792266369.7012308,
+    "ast_hash": "d3581c27235de492d41f507353180b45",
+    "semantic_hash": "d3581c27235de492d41f507353180b45"
+  },
+  "pregunta.md": {
+    "mtime": 1790118900.8795738,
+    "seen": 1792266369.7012312,
+    "ast_hash": "2e4e844e87367452c6006fe8713b05e8",
+    "semantic_hash": "2e4e844e87367452c6006fe8713b05e8"
+  }
+}

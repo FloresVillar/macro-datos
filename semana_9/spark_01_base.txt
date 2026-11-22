@@ -1,0 +1,190 @@
+https://drive.google.com/file/d/1x0dn6B1e24hTkU6fzj12HwI9DP4YtKfF/view?usp=sharing
+```python
+INGRESAR A LA PAGINA DE APACHE SPARK
+DESCARGAR EL SPARK
+Instalar scala-2.12.10
+
+https://spark.apache.org/
+https://archive.apache.org/dist/spark/spark-3.0.1/
+https://archive.apache.org/dist/spark/spark-3.0.1/
+spark-3.0.1-bin-hadoop2.7.tgz
+
+c:-
+  +spark
+     +bin
+     +conf
+     +...
+
+VARIABLES DE USUARIO
+--------------------
+JAVA_HOME  C:\java
+SCALA_HOME C:\Program Files (x86)\scala
+SPARK_HOME C:\spark
+
+VARIABLES DEL SISTEMA
+---------------------
+PATH
+C:\java\bin
+C:\spark\bin
+
+cd C:\spark\bin            // (PowerShell) ir a la carpeta de los programas de Spark
+run-example SparkPi 10     // (PowerShell) corre el ejemplo SparkPi con 10 tareas: estima pi, prueba que Spark funciona
+
+spark-shell                // (PowerShell) abre la consola de Scala con Spark; deja listo el objeto sc
+
+val txtShake = sc.textFile("shake.txt")   // RDD con una linea del archivo por elemento (el original usa repos.txt, que no existe)
+txtShake.collect                          // accion: trae todas las lineas al driver y las imprime
+
+val query = txtShake.flatMap(line => line.split(",")).map(word => (word,1)).reduceByKey(_ + _)   // parte por comas, arma (trozo,1) y suma por trozo
+query.toDebugString                       // muestra el linaje: la cadena de transformaciones desde shake.txt
+query.cache()                             // marca el RDD para guardarlo en memoria cuando se calcule
+
+query.saveAsTextFile("output_shake_")     // accion: ejecuta todo y guarda el resultado en la carpeta output_shake_
+query.collect                             // accion: trae los pares (trozo, cantidad) al driver (sale del cache)
+```
+https://drive.google.com/file/d/1CY-AGbYXM4AZgaX_gCN3YN3Q3CNU9agm/view?usp=sharing
+
+```python
+// Declarar Variable
+val x = 6 + 4                 // variable inmutable (val): x = 10, tipo Int deducido
+
+// Imprimir
+print({                       // imprime el valor de un bloque { }: el valor es su ultima linea
+	val x = 3 + 2             // la ultima linea es una declaracion -> el bloque vale () (Unit, "nada")
+})
+
+print({
+	val x = 3 + 2             // x = 5 solo dentro del bloque
+        x + 7                 // ultima linea -> el bloque vale 12 y eso se imprime
+})
+
+(x :Int) => x + 2             // funcion anonima (lambda): recibe un Int y le suma 2; sola no hace nada
+
+val masDos = (x: Int) => x + 2   // guarda la lambda en una variable para poder llamarla
+println(masDos(3))               // la llama con 3 -> imprime 5
+
+
+val mulCinco = (x: Int) => x * 5 // lambda que multiplica por 5
+println(mulCinco(7))             // imprime 35
+mulCinco(5)                      // la consola muestra res: Int = 25
+
+val larespuesta = () => 12 * 21  // lambda sin parametros
+println(larespuesta())           // se llama con () -> imprime 252
+
+
+print(12)                        // print imprime sin salto de linea
+print("Hola Mundo")              // imprime un texto
+print("Hola" + " Spark")         // + une textos -> "Hola Spark"
+
+val x = 7 * 3                    // redefine x (en la consola se permite) -> 21
+println(x)                       // println imprime con salto de linea -> 21
+println("la solución es: " + x)  // texto + numero -> "la solución es: 21"
+
+val mult1 = (x: Int, y: Int) => x * y   // lambda de dos parametros
+println(mult1(3,7))                     // imprime 21
+
+def mult2(x: Int, y: Int)(aux: Int):    // def = funcion con nombre; dos listas de parametros (currying)
+Int = (x * y)*aux                       // devuelve Int: (x*y)*aux
+println(mult2(3,5)(2))                  // se llama con dos pares de parentesis -> (3*5)*2 = 30
+
+def mult3(x: Int, y: Int):              // funcion con nombre de dos parametros
+Int = (x * y)                           // devuelve x*y
+println(mult3(3,9))                     // imprime 27
+
+// Plantilla de clase (no se ejecuta):
+// class nombre( variables...){
+//   def ...
+// }
+
+class miclase(nombre: String, apellido: String){   // clase con dos parametros de construccion
+	def imprimo(apodo: String):                    // metodo que recibe un apodo
+	Unit = println(nombre + apodo + apellido)      // Unit = no devuelve nada; solo imprime los tres textos juntos
+}
+
+val claseA = new miclase("hola","amiga").imprimo("maria")   // crea un objeto y llama imprimo -> "holamariaamiga"
+val claseB = new miclase("hello","amigo")                   // crea otro objeto (instancia) de la clase
+claseB.imprimo("Juan")                                      // imprime "helloJuanamigo"
+
+// Plantilla de objeto (no se ejecuta):
+// object nombre{
+//   var ..
+//   def ..
+// }
+
+object Colegio{                 // object = una sola instancia, se usa sin new
+	private var alumno = 10     // var = variable que si se puede cambiar; private = solo visible dentro del object
+	def crear():Int = {         // metodo que devuelve Int
+		alumno += 1             // suma 1 al contador
+		alumno                  // ultima linea = valor devuelto
+	}
+}
+
+val alumno1: Int = Colegio.crear()   // 11
+val alumno2: Int = Colegio.crear()   // 12: el contador se conserva entre llamadas
+
+object OpeRand{
+	private var ale = 1                     // contador que empieza en 1
+	def porDos():Int = {ale *= 2; ale}      // multiplica por 2 y devuelve el valor (; separa instrucciones en una linea)
+	def masDos():Int = {ale += 2; ale}      // suma 2 y devuelve el valor
+}
+
+val ab1: Int = OpeRand.porDos()   // 1*2 = 2
+val ab2: Int = OpeRand.masDos()   // 2+2 = 4
+val ab1: Int = OpeRand.porDos()   // 4*2 = 8 (sigue desde el valor anterior: hay un solo OpeRand)
+val ab2: Int = OpeRand.masDos()   // 8+2 = 10
+
+// Tarea: pasar el object OpeRand a class (cada instancia con new tiene su propio ale)
+class OpeRandC{
+	private var ale = 1                     // cada objeto creado con new tiene su propio ale
+	def porDos():Int = {ale *= 2; ale}
+	def masDos():Int = {ale += 2; ale}
+}
+val op1 = new OpeRandC    // primera instancia (ale = 1)
+val op2 = new OpeRandC    // segunda instancia, independiente (ale = 1)
+op1.porDos()              // 2
+op1.masDos()              // 4
+op2.porDos()              // 2: op2 no se ve afectado por op1
+
+// ¿Como se sale de Scala?
+:quit                     // cierra spark-shell
+```
+https://drive.google.com/file/d/1I6ljV2lBObSfIIE8MwC5McGm7tqV3mpu/view?usp=sharing
+
+```python
+var a = 8                              // var = variable que se puede cambiar
+val s = if (a>1 && a<9) 1 else 0       // if devuelve un valor: 8 esta entre 1 y 9 -> s = 1 (&& = "y")
+
+var a = 9                              // redefine a
+val s = if (a>1 && a<9) 1 else 0       // 9 no es menor que 9 -> s = 0
+
+var arg = "dogo"                       // texto
+var i = 0                              // contador
+while(i<arg.length){                   // repite mientras i sea menor que el largo del texto (4)
+	println(arg(i))                    // arg(i) = caracter en la posicion i -> imprime d, o, g, o
+	i += 1                             // avanza el contador
+}
+
+var arg = "SCALA"
+arg.foreach(println)                   // recorre cada caracter y lo imprime: S, C, A, L, A
+
+val mi_array = Array(1,2,3,4,5)        // arreglo de enteros
+for (x <- mi_array) yield x * 2        // recorre el arreglo y arma uno nuevo con cada valor * 2 -> Array(2,4,6,8,10)
+
+def area(radius:Int):Double = {        // funcion que recibe un Int y devuelve Double (decimal)
+	7.20*radius*radius                 // ultima linea = valor devuelto
+}
+var hola = area(4)                     // 7.20*4*4 = 115.2
+
+def concatenar(arg1: String, arg2: String="CLASE", arg3: String="labo") = println (arg1+arg2+arg3)   // arg2 y arg3 tienen valor por defecto
+concatenar("BigData")                  // usa los dos por defecto -> "BigDataCLASElabo"
+concatenar("BigData", arg3 = "spark")  // cambia solo arg3 por nombre -> "BigDataCLASEspark"
+concatenar("")                         // arg1 vacio -> "CLASElabo"
+
+def rect_area(length: Float, breadth:Float){val area = length*breadth; println(area)}   // sin "=": no devuelve nada (Unit), solo imprime
+rect_area(6,4)                         // imprime 24.0 (Float)
+
+
+var i = Array("Hello","Bye")           // arreglo de textos
+println(i(0))                          // primer elemento (indice 0) -> Hello
+println(i(1))                          // segundo elemento -> Bye
+```

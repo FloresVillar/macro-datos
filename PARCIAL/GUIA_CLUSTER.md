@@ -1,3 +1,127 @@
+
+<div align="center">
+
+#  ANÁLISIS EN MACRODATOS
+
+### EXAMEN PARCIAL
+
+**2026-2**
+
+<img width="1200" height="1509" alt="UNI-logo" src="https://github.com/user-attachments/assets/0c31891b-7e30-43d9-9756-57a0af3c0464" />
+
+
+---
+
+#  Integrantes
+
+- Esaú Flores Villar
+- José Manuel Montalvo Espinoza
+
+---
+</div>
+
+# ÍNDICE GENERAL
+
+## 1. INTRODUCCIÓN Y CONTEXTO DEL PROYECTO
+* **1.1.** Objetivos del Proyecto
+* **1.2.** Descripción de la Fuente de Datos (Dataset SUTRAN)
+  * **1.2.1.** Ficha Técnica y Metadatos de la PNDA
+  * **1.2.2.** Diccionario de Datos y Tipos de Variables
+  * **1.2.3.** Perfil del CSV y Calidad de Datos (Limpieza, Encoding UTF-8 y Nulos)
+* **1.3.** Referencias Bibliográficas e Investigaciones Previas
+
+---
+
+## 2. ARQUITECTURA E IMPLEMENTACIÓN DEL CLÚSTER HADOOP
+* **2.1.** Topología y Recursos de Hardware/Software
+* **2.2.** Configuración del Entorno de Virtualización (VirtualBox & Hyper-V)
+* **2.3.** Guía Paso a Paso de Instalación y Configuración Multi-nodo
+  * **2.3.1.** Creación e Instalación de la Máquina Virtual Base (`master`)
+  * **2.3.2.** Configuración de Red Fija (Netplan) y Resolución de Nombres (`/etc/hosts`)
+  * **2.3.3.** Clonación de Nodos Trabajadores (`worker1` y `worker2`)
+  * **2.3.4.** Configuración SSH con Autenticación mediante Claves Públicas
+  * **2.3.5.** Instalación de Java 11 y Configuración de Variables de Entorno (`.bashrc`)
+  * **2.3.6.** Configuración de XMLs de Hadoop (`core-site.xml`, `hdfs-site.xml`, `mapred-site.xml`, `yarn-site.xml`, `workers`)
+  * **2.3.7.** Formateo e Inicio de Servicios Distribuidos (HDFS & YARN)
+* **2.4.** Verificación de Nodos Conectados (Panel Web YARN `:8088` / HDFS `:9870` y comandos `jps`, `dfsadmin`)
+* **2.5.** Prueba Inicial de Funcionamiento en Paralelo (*WordCount*)
+
+---
+
+## 3. DESARROLLO DE CONSULTAS Y ALGORITMOS EN HADOOP MAPREDUCE
+* **3.1.** Consultas de Complejidad con Decimales (MapReduce Triple)
+  * **3.1.1. Consulta 1 (`SeveridadPorVia`):** Índice de Severidad de Víctimas por Carretera
+    * *a) Formulación de la Pregunta y Lógica de Negocio*
+    * *b) Diseño del Pipeline de 3 Jobs (Encadenamiento de Mappers y Reducers)*
+    * *c) Inputs, Outputs y Resultados Obtenidos*
+  * **3.1.2. Consulta 2 (`PuntosNegrosPorTramo`):** Detección de Tramos Críticos por Z-Score
+    * *a) Formulación de la Pregunta y Análisis Estadístico por Tramo (10 km)*
+    * *b) Arquitectura MapReduce Triple y Manejo de Decimales*
+    * *c) Inputs, Outputs y Ranking de Puntos Negros*
+* **3.2.** Algoritmo de Agrupamiento Geográfico en MapReduce (Sin Librerías)
+  * **3.2.1. Consulta 3 (`AgrupamientoDBSCAN`):** Clustering Espacial Basado en Densidad
+    * *a) Justificación del Algoritmo y Cálculo de Distancia Haversine*
+    * *b) Arquitectura de 19 Jobs MapReduce (Vecindad, Propagación Etiquetada, Resumen, Ranking y Métricas)*
+    * *c) Selección de Parámetros ($\epsilon = 2\text{ km}$, $\text{minPts} = 10$)*
+    * *d) Resultados y Centroides de Zonas Críticas Obtenidos*
+* **3.3.** Modelos de Machine Learning Nativos en MapReduce con Gradiente Descendente
+  * **3.3.1.** Arquitectura Común de Red Neuronal Multicapa (MLP) en MapReduce
+  * **3.3.2. Consulta 4 (`PerceptronClasificacion`):** Predicción de Accidentes con Fallecidos
+    * *a) Preparación de Variables, Normalización Z-Score y Split Train/Test*
+    * *b) Implementación de Gradiente Descendente Completo por Épocas (53 Jobs)*
+    * *c) Función de Pérdida con Entropía Cruzada Ponderada y Evaluación*
+  * **3.3.3. Consulta 5 (`PerceptronRegresion`):** Estima de Cantidad de Heridos
+    * *a) Transformación Logarítmica y Modelo de Salida Lineal*
+    * *b) Propagación de Gradientes Distribuidos y Curva de Pérdida*
+
+---
+
+## 4. EVALUACIÓN DE RENDIMIENTO Y COMPARACIÓN EXPERIMENTAL
+* **4.1.** Métricas del Algoritmo de Agrupamiento (*Clúster vs. Nodo Único*)
+  * **4.1.1.** *Silhouette Score*
+  * **4.1.2.** *Davies-Bouldin Index*
+* **4.2.** Métricas de Evaluación de Modelos de Machine Learning
+  * **4.2.1.** Tabla Comparativa del Perceptrón de Clasificación (*Accuracy, Precision, Recall, F1-Score, Matriz de Confusión*)
+  * **4.2.2.** Tabla Comparativa del Perceptrón de Regresión (*MSE, MAE, $R^2$*)
+* **4.3.** Análisis de Rendimiento de la Infraestructura (*Clúster Distribuido vs. Nodo Único*)
+  * **4.3.1.** Tabla Comparativa de Tiempos de Ejecución
+  * **4.3.2.** Cálculo del *Speedup* y Discusión Técnica sobre la Carga de Trabajo y Overhead de Red
+  * **4.3.3.** Monitoreo de Recursos del Sistema (*CPU Promedio, Uso de Memoria RAM, htop y vmstat*)
+
+---
+
+## 5. ANALÍTICA VISUAL Y DASHBOARDS EN POWER BI
+* **5.1.** Exportación y Transformación de Resultados HDFS a TSV/UTF-8
+* **5.2.** Integración de Coordenadas Geográficas y Categorización en Power Query
+* **5.3.** Visualización de Resultados:
+  * **5.3.1.** Mapa Geográfico de Accidentes por Grupo DBSCAN
+  * **5.3.2.** Mapa de Burbujas de Zonas Críticas y Puntos Negros
+  * **5.3.3.** Gráficos de Severidad por Departamento
+  * **5.3.4.** Curvas de Pérdida por Época de los Modelos MLP
+
+---
+
+## 6. CONCLUSIONES Y RECOMENDACIONES
+* **6.1.** Conclusiones sobre la Infraestructura y el Paralelismo en Hadoop
+* **6.2.** Hallazgos Clave en la Red Vial SUTRAN
+* **6.3.** Recomendaciones para Escalamiento de Macrodatos
+
+---
+
+## 7. ANEXOS Y ENTREGABLES
+* **Anexo A:** Scripts de Automatización (`parcial.sh` y `parcial.ps1`)
+* **Anexo B:** Estructura de Clases Java y Paquetes Compilados (`PARCIAL.jar`)
+* **Anexo C:** Licencia y Origen del Dataset PNDA - SUTRAN
+
+
+
+---
+
+
+
+
+### PREPARACIÓN DEL ENTORNO
+
 # Guía: clúster Hadoop 3.3.6 en VirtualBox (1 master + 2 workers)
 
 > **Estado: ejecutada y comprobada (2026-10-17/18).** Clúster funcionando: 2 DataNodes vivos y WordCount correcto. Cada paso tiene debajo su resultado real y la captura.
@@ -645,7 +769,7 @@ hdfs dfs -cat /output/part-r-00000       # muestra el conteo de palabras
 
 **Resultado (2026-10-18):** con la frase `...curso de ANALISI DE MACRODATOS ` el job leyó 690000 bytes y `part-r-00000` dio `de` 20000 y las demás palabras (incluidas `DE`, `ANALISI`, `MACRODATOS`) 10000 cada una; WordCount distingue mayúsculas (captura [`PARCIAL/imagenes/9_MAPREDUCE.png`](imagenes/9_MAPREDUCE.png)).
 
-## Desarrollo del Parcial
+# DESARROLLO DEL EXAMEN PARCIAL
 
 ### Tanto en el informe como en la presentación
 

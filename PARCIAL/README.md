@@ -74,3 +74,66 @@ Descripción (PNDA): la Subgerencia de Supervisión Electrónica, según el ROF 
 - Regresión: `CANT_HERIDOS` / `CANT_FALLECIDOS` son conteos con muchos ceros.
 - Agrupamiento: usar `LATITUD`/`LONGITUD` (no aplica K-means según el enunciado).
 - Volumen pequeño (≈ 430 KB): tenerlo en cuenta al interpretar el speedup clúster vs. un nodo.
+
+## Perceptrón de clasificación: flujo de jobs MapReduce
+
+`Driver` de este paquete llama a `PerceptronComun.Entrenamiento.ejecutar` con `tipo = clasificacion`; los Mapper, Reducer y la red están en `45_PerceptronComun`. En las aristas va el **k**ey y el **v**alor que viajan; los campos se separan con `|`, como en el código.
+
+```mermaid
+flowchart TD
+  CSV[("CSV SUTRAN en HDFS · separador ;<br/>col1 NRO_REPORTE · col2 FECHA_ACC · col3 HORA_ACC · col4 MODALIDAD_ACC<br/>col5 CANT_FALLECIDOS · col6 CANT_HERIDOS · col7 LATITUD · col8 LONGITUD<br/>col9 PROGRESIVA · col10 CODIGO_VIA")]
+  DRV["PerceptronClasificacion.Driver → Entrenamiento.ejecutar<br/>tipo = clasificacion · épocas = 50 · tasa = 0.5 · peso_positivo = 4.8<br/>red 18 → 8 tanh → 1 sigmoide · 161 pesos · semilla 42"]
+
+  subgraph HAD["Hadoop · no está en el código del proyecto"]
+    MT["MapTask · 1 por bloque de la entrada, en un worker<br/>crea el Mapper y llama configure(job)"]
+    LRR["LineRecordReader · TextInputFormat<br/>lee el bloque línea por línea"]
+    RUN["MapRunner.run<br/>while (next(k, v)) mapper.map(k, v)"]
+  end
+
+  DRV -- "envía el job 1 a YARN" --> MT
+  CSV -- "bloque del archivo" --> LRR
+  MT --> RUN
+  LRR -- "k = offset en bytes, v = 1 línea" --> RUN
+  RUN -- "map(k, v) · 1 llamada por línea<br/>k = offset en bytes, v = 1 línea CSV" --> ME1
+  DRV -. "JobConf: mlp.tipo, mlp.peso.positivo" .-> ME1
+
+  subgraph J1["JOB 1 · Estadísticas"]
+    ME1["MapperEstadisticas<br/>Variables.desdeCsv: 18 variables x0..x17<br/>descarta cabecera, filas inválidas y test (20 %)"]
+    RE1["ReducerEstadisticas · por variable<br/>media y desviación (z-score)"]
+  end
+  ME1 -- "k = j (0..17)<br/>v = valor de la variable j" --> RE1
+  RE1 -- "k = j, v = media | desviacion" --> EST[("salida_estadisticas")]
+
+  subgraph J2["JOB 2 · Vectores · solo map, 0 reducers"]
+    MV["MapperVectores<br/>configure: lee medias y desviaciones<br/>z = (x − media) / desviación; faltante → 0"]
+  end
+  CSV -- "igual que el job 1: 1 línea CSV por map()" --> MV
+  EST -. "configure() · mlp.estadisticas" .-> MV
+  MV -- "k = train / test<br/>v = yClasificacion | yRegresion | z0,…,z17" --> VEC[("salida_vectores")]
+
+  subgraph J3["JOBS 3..52 · Épocas (una por job)"]
+    MEP["MapperEpoca<br/>configure: pesos actuales (mlp.pesos)<br/>por cada ejemplo train: forward + backpropagation<br/>acumula gradiente y pérdida; emite en close()"]
+    REP["ReducerEpoca · 1 reducer<br/>suma los gradientes parciales"]
+  end
+  VEC -- "train/test TAB yC | yR | z0,…,z17" --> MEP
+  MEP -- "1 línea por map task<br/>k = 'gradiente'<br/>v = pérdida | ejemplos | g0,…,g160" --> REP
+  REP -- "k = 'gradiente'<br/>v = pérdida_total | ejemplos | g0,…,g160" --> EPO[("salida_epoca n · se borra al leerla")]
+  EPO --> UPD["Driver actualiza los pesos<br/>w ← w − tasa · g / ejemplos<br/>guarda la pérdida media en la curva"]
+  UPD --> DEC{"¿época = 50?"}
+  DEC -- "no · siguiente época<br/>JobConf mlp.pesos = 161 pesos nuevos" --> MEP
+  DEC -- "sí" --> CUR[("salida_curva<br/>época TAB pérdida · pesos_finales")]
+  DEC -- "sí" --> MEV
+
+  subgraph J4["JOB final · Evaluación · 1 reducer"]
+    MEV["MapperEvaluacion<br/>configure: pesos finales<br/>predice cada ejemplo test (probabilidad)"]
+    REV["ReducerEvaluacion<br/>umbral 0.5: accuracy, precisión, recall, F1,<br/>matriz de confusión, pérdida, línea base 'siempre no'"]
+  end
+  VEC -- "train/test TAB yC | yR | z0,…,z17" --> MEV
+  MEV -- "k = 'test'<br/>v = real | predicho" --> REV
+  REV -- "ejemplos_test · perdida_test · accuracy · precision · recall<br/>f1 · accuracy_base_siempre_no · matriz_confusion" --> OUT[("salida = args[1]")]
+```
+
+- **Cilindros:** directorios en HDFS. `salida` es el `args[1]` del Driver; entre jobs cada línea viaja como `key TAB valor`.
+- **Flechas sólidas:** el par (k, v) que emite cada Mapper o Reducer; lo del Mapper llega agrupado por key al Reducer.
+- **Flechas punteadas:** entradas fuera del shuffle (parámetros del `JobConf` y lecturas en `configure()`).
+- **Rombo:** el ciclo de `Entrenamiento.java`, un job por época; entre épocas el Driver actualiza los 161 pesos y se los pasa al siguiente job por `mlp.pesos`.
